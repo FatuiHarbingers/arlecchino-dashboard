@@ -24,7 +24,7 @@ RUN sed -i 's/dev/prd/g' doppler.yaml
 COPY --chown=node:node .yarnrc.yml .
 COPY --chown=node:node static/ static/
 COPY --chown=node:node svelte.config.js .
-COPY --chown=node:node vite.config.js .
+COPY --chown=node:node vite.config.ts .
 # Remove global cache config line
 RUN echo "$(tail -n +2 .yarnrc.yml)" > .yarnrc.yml
 
