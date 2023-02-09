@@ -17,7 +17,11 @@
 
 	const bindString = ( property: 'avatar' | 'name', e: unknown ) => {
 		const event = e as EventTarget & { target: EventTarget & HTMLInputElement }
-		config[ property ] = event.target.value
+		if ( event.target.value.length === 0 ) {
+			config[ property ] = undefined
+		} else {
+			config[ property ] = event.target.value
+		}
 	}
 
 	const bindColor = ( e: unknown ) => {
@@ -62,7 +66,7 @@
 </script>
 
 <div class="config-view" style="--color: #{ config.color.toString( 16 ).padStart( 6, '0' ) }">
-	<label for="avatar"> Avatar URL </label>
+	<label for="avatar"> Avatar URL - { `${ config.avatar }` } </label>
 	<TextInput value={ config.avatar } onInput={ bindString.bind( undefined, 'avatar' ) } />
 
 	<label for="name"> Webhook name </label>

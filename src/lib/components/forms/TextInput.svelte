@@ -5,7 +5,7 @@
 	export let value: string | null = null
 </script>
 
-<input type="text" on:change={ onChange } on:input={ onInput } placeholder={ placeholder } value={ value } />
+<input type="text" on:change={ onChange } on:input={ onInput } placeholder={ placeholder } value={ value ?? '' } />
 
 <style>
 input {
