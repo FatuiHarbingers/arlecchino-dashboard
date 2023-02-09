@@ -1,6 +1,6 @@
-import { load } from 'ts-dotenv'
+import { type EnvType, load } from 'ts-dotenv'
 
-export const env = load( {
+const schema = {
 	API_URL: String,
 	DISCORD_API: String,
 	DISCORD_CLIENT_ID: String,
@@ -15,4 +15,6 @@ export const env = load( {
 	REDIS_PASSWORD: String,
 	REDIS_PORT: Number,
 	REDIS_USERNAME: String
-} )
+}
+
+export const env = process.env.CI ? {} as EnvType<typeof schema> : load( schema )
