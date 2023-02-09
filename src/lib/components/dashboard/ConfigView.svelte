@@ -66,7 +66,7 @@
 </script>
 
 <div class="config-view" style="--color: #{ config.color.toString( 16 ).padStart( 6, '0' ) }">
-	<label for="avatar"> Avatar URL - { `${ config.avatar }` } </label>
+	<label for="avatar"> Avatar URL </label>
 	<TextInput value={ config.avatar } onInput={ bindString.bind( undefined, 'avatar' ) } />
 
 	<label for="name"> Webhook name </label>
