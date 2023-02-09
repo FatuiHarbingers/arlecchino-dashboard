@@ -11,7 +11,7 @@
 
 <div class="guilds">
 	{ #each data.guilds as guild }
-		<GuildView clientId="1072343005358456895" guild={ guild } />
+		<GuildView clientId="1071136383407759541" guild={ guild } />
 	{ /each }
 </div>
 
