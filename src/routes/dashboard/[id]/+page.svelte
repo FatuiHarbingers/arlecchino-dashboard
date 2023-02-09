@@ -29,7 +29,7 @@
 			if ( !newSettings ) continue
 			if ( !stored && !newSettings.remove ) {
 				const req = await fetch( '/api/register', {
-					body: JSON.stringify( newSettings ),
+					body: JSON.stringify( newSettings, ( _, v ) => v || undefined ),
 					headers: {
 						'content-type': 'application/json'
 					},
