@@ -17,9 +17,10 @@
 		customSettings = customSettings
 	}
 
-	const save = async ( e: unknown ) => {
-		const { target } = e as EventTarget & { target: EventTarget & HTMLButtonElement }
-		target.disabled = true
+	let isSaving = false
+	const save = async () => {
+		if ( isSaving ) return
+		isSaving = true
 
 		const maxItems = Math.max( data.wikis.length, customSettings.length )
 		for ( let i = 0; i < maxItems; i++ ) {
@@ -56,6 +57,9 @@
 					alert( `There was an error while trying to remove ${ newSettings.wiki }.` )
 				}
 				continue
+			} else if ( stored.wiki !== newSettings.wiki ) {
+				alert( `You can't change the wiki of an existing configuration. Please, remove it and add a new one instead.` )
+				continue
 			}
 
 			let prop: keyof typeof stored
@@ -77,10 +81,10 @@
 				}
 			}
 		}
-
-		target.disabled = false
+		
 		customSettings = customSettings.filter( i => !i.remove )
-		data.wikis = customSettings
+		data.wikis = customSettings.map( i => ( { ...i } ) )
+		isSaving = false
 	}
 </script>
 
