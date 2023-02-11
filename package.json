@@ -27,6 +27,7 @@
 	"packageManager": "yarn@3.4.1",
 	"dependencies": {
 		"@discordjs/rest": "^1.5.0",
+		"@sapphire/discord-utilities": "^3.0.0",
 		"@sapphire/shapeshift": "^3.8.1",
 		"@sapphire/timestamp": "^1.0.0",
 		"@sveltejs/adapter-node": "^1.1.8",

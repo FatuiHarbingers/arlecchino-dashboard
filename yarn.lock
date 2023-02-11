@@ -412,6 +412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sapphire/discord-utilities@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@sapphire/discord-utilities@npm:3.0.0"
+  dependencies:
+    discord-api-types: ^0.37.25
+  checksum: c17ddb5c663fb474e134f881bfa9fb803bdb315220894079c92966b72208ae52f4a995faae2701519d99690f0ed591d7e9995e8c7ffc36821435fd454af5d4b1
+  languageName: node
+  linkType: hard
+
 "@sapphire/shapeshift@npm:^3.7.1, @sapphire/shapeshift@npm:^3.8.1":
   version: 3.8.1
   resolution: "@sapphire/shapeshift@npm:3.8.1"
@@ -828,6 +837,7 @@ __metadata:
   resolution: "arlecchino-dashboard@workspace:."
   dependencies:
     "@discordjs/rest": ^1.5.0
+    "@sapphire/discord-utilities": ^3.0.0
     "@sapphire/shapeshift": ^3.8.1
     "@sapphire/timestamp": ^1.0.0
     "@sveltejs/adapter-auto": ^2.0.0
@@ -1143,6 +1153,13 @@ __metadata:
   version: 0.37.31
   resolution: "discord-api-types@npm:0.37.31"
   checksum: 8886a4c320b2abd1fd32cb573d688a9b677b6d82107efe9ea70c6d571dc5eb04d27741320d5e2ae46b316282248176a82c2212de2d11fc32d1f5a869b6519f03
+  languageName: node
+  linkType: hard
+
+"discord-api-types@npm:^0.37.25":
+  version: 0.37.32
+  resolution: "discord-api-types@npm:0.37.32"
+  checksum: 0d45e5741af8d01f48d81fa417f6cb69bd8647c0c8c0d2bd8f5500e6f1dbe8d8cc62b224522de1cb996125d79de198ad34bb51181daf63e48f659b46eadc2e0a
   languageName: node
   linkType: hard
 
