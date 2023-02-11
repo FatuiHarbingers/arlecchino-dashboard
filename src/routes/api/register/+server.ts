@@ -7,7 +7,7 @@ export const POST: RequestHandler = async event => {
 	try {
 		const data = await event.request.json()
 		const parser = s.object( {
-			avatar: s.string.optional,
+			avatar: s.string.url().optional,
 			channel: s.string,
 			color: s.number.optional,
 			guild: s.string,
@@ -24,6 +24,7 @@ export const POST: RequestHandler = async event => {
 			},
 			method: 'POST'
 		} )
+
 		const res = await req.json()
 		return json( res )
 	} catch ( e ) {

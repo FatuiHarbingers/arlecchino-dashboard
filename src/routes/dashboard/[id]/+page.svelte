@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { add as addToast } from '$lib/stores/Toasts';
     import ConfigView from '$lib/components/dashboard/ConfigView.svelte'
     import Button from '$lib/components/ui/Button.svelte';
-
 
     export let data: import('./$types').PageData
 	let customSettings = data.wikis.map( i => ( { ...i, remove: false } ) )
@@ -36,8 +36,10 @@
 					},
 					method: 'POST'
 				} )
-				if ( req.status !== 200 ) {
-					alert( `There was an error while trying to register ${ newSettings.wiki }.` )
+				if ( req.status === 200 ) {
+					addToast( { text: `${ newSettings.wiki } has been registered successfully.`, type: 'success' } )
+				} else {
+					addToast( { text: `There was an error while trying to register ${ newSettings.wiki }.`, type: 'danger' } )
 				}
 				continue
 			} else if ( !stored ) {
@@ -53,12 +55,15 @@
 					},
 					method: 'POST'
 				} )
-				if ( req.status !== 200 ) {
-					alert( `There was an error while trying to remove ${ newSettings.wiki }.` )
+				if ( req.status === 200 ) {
+					addToast( { text: `${ newSettings.wiki } has been removed successfully.`, type: 'success' } )
+				} else {
+					addToast( { text: `There was an error while trying to remove ${ newSettings.wiki }.`, type: 'danger' } )
 				}
 				continue
 			} else if ( stored.wiki !== newSettings.wiki ) {
-				alert( `You can't change the wiki of an existing configuration. Please, remove it and add a new one instead.` )
+				addToast( { text: `You can't change the wiki of an existing configuration. Please, remove it and add a new one instead.`, type: 'warn' } )
+				newSettings.wiki = stored.wiki
 				continue
 			}
 
@@ -74,8 +79,10 @@
 						},
 						method: 'POST'
 					} )
-					if ( req.status !== 200 ) {
-						alert( `There was an error while trying to update ${ newSettings.wiki }.` )
+					if ( req.status === 200 ) {
+						addToast( { text: `The configuration for ${ newSettings.wiki } has been updated successfully.`, type: 'success' } )
+					} else {
+						addToast( { text: `There was an error while trying to update ${ newSettings.wiki }.`, type: 'danger' } )
 					}
 					break
 				}
