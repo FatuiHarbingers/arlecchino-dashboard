@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { APIGuild } from 'discord-api-types/v10'
     import GuildView from '$lib/components/dashboard/GuildView.svelte'
 
-
-    export let data: import('./$types').PageData
+	const guilds = fetch( '/api/guilds' )
+		.then( r => r.json() as Promise<{ guilds: ( APIGuild & { hasBot: boolean } )[] }> )
 </script>
 
 <svelte:head>
@@ -10,9 +11,13 @@
 </svelte:head>
 
 <div class="guilds">
-	{ #each data.guilds as guild }
-		<GuildView clientId="1071136383407759541" guild={ guild } />
-	{ /each }
+	{ #await guilds }
+		<p> Loading your guilds... </p>
+	{ :then result } 
+		{ #each result.guilds as guild }
+			<GuildView clientId="1071136383407759541" guild={ guild } />
+		{ /each }
+	{ /await }
 </div>
 
 <style>
