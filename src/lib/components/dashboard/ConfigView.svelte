@@ -75,7 +75,7 @@
 
 <div class="config-view" style="--color: #{ config.color.toString( 16 ).padStart( 6, '0' ) }">
 	{ #if config.avatar && s.string.url().run( config.avatar ).success }
-		<img class="cv__avatar" src={ config.avatar } alt="avatar" />
+		<img class="cv__avatar" src={ config.avatar } alt="avatar" width="128" />
 	{ /if }
 	<label for="avatar"> Avatar URL </label>
 	<TextInput value={ config.avatar } onInput={ bindString.bind( undefined, 'avatar' ) } />
