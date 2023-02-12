@@ -17,4 +17,4 @@ const schema = {
 	REDIS_USERNAME: String
 }
 
-export const env = import.meta.env.MODE === 'staging' ? {} as EnvType<typeof schema> : load( schema )
+export const env = import.meta.env.MODE === 'staging' ? process.env as unknown as EnvType<typeof schema> : load( schema )
