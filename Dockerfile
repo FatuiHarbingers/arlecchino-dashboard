@@ -41,7 +41,7 @@ COPY --chown=node:node tsconfig.json tsconfig.json
 RUN yarn install --immutable
 
 COPY --chown=node:node src/ src/
-RUN doppler run yarn run build
+RUN yarn run build --mode staging
 
 # Runner Stage
 FROM base AS runner
