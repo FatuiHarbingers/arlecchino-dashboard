@@ -6,7 +6,9 @@
 </script>
 <div class="global-navigation">
 	<h1 class="gn__brand">
-		<a href="/"> Arlecchino </a>
+		<a href="/">
+			<img src="/logo.png" alt="logo" height="32" />
+		</a>
 	</h1>
 	<div class="gn__right">
 		<a class="gn__item gn-item__dashboard" href="/dashboard"> Dashboard </a>
@@ -25,7 +27,8 @@
 <style>
 .global-navigation {
 	align-items: center;
-	background-color: #1c1c25;
+	background-color: #0a0e12;
+	box-shadow: 0 0 3px #000;
 	display: flex;
 	justify-content: space-between;
 	padding: 5px 32px;

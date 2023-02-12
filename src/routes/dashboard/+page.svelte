@@ -1,9 +1,13 @@
 <script lang="ts">
 	import type { APIGuild } from 'discord-api-types/v10'
     import GuildView from '$lib/components/dashboard/GuildView.svelte'
+    import { browser } from '$app/environment';
+    import type { Awaitable } from 'discord.js';
 
-	const guilds = fetch( '/api/guilds' )
-		.then( r => r.json() as Promise<{ guilds: ( APIGuild & { hasBot: boolean } )[] }> )
+	const guilds: Awaitable<{ guilds: ( APIGuild & { hasBot: boolean } )[] }> = browser
+		? fetch( '/api/guilds' )
+			.then( r => r.json() )
+		: { guilds: [] }
 </script>
 
 <svelte:head>
