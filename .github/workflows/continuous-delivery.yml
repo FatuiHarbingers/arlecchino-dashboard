@@ -64,7 +64,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args:
-            - DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}
+            DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
       - name: Save image tag for use in deploy job
         id: save_tag
