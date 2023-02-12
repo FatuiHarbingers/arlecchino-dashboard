@@ -3,6 +3,7 @@
     import Dropdown from '../forms/Dropdown.svelte';
     import TextInput from '../forms/TextInput.svelte';
     import Button from '../ui/Button.svelte';
+	import { s } from '@sapphire/shapeshift'
 
 	export let channels: APIChannel[]
 	export let config: {
@@ -63,9 +64,19 @@
 			config.wiki = `${ lang }.${ name }`
 		}
 	}
+
+	let avatar: string | null = null
+	try {
+		avatar = s.string.url().parse( config.avatar )
+	} catch {
+		avatar = null
+	}
 </script>
 
 <div class="config-view" style="--color: #{ config.color.toString( 16 ).padStart( 6, '0' ) }">
+	{ #if config.avatar && s.string.url().run( config.avatar ).success }
+		<img class="cv__avatar" src={ config.avatar } alt="avatar" />
+	{ /if }
 	<label for="avatar"> Avatar URL </label>
 	<TextInput value={ config.avatar } onInput={ bindString.bind( undefined, 'avatar' ) } />
 
@@ -111,5 +122,9 @@ label {
 }
 label:not(:first-of-type) {
 	margin-top: 8px;
+}
+.cv__avatar {
+	float: right;
+	margin: 16px;
 }
 </style>
