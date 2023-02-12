@@ -1,9 +1,9 @@
 import { env } from '$lib'
 import type { ServerLoadEvent } from '@sveltejs/kit'
-import type { PageServerParentData } from '../$types'
+import type { PageParentData } from '../$types'
 import { ChannelType, type APIChannel } from 'discord.js'
 
-export const load = async ( event: ServerLoadEvent<{ id: string }, PageServerParentData, '/dashboard/:id'> ) => {
+export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/:id'> ) => {
 	const guildId = event.params.id
 	
 	const list = await event.fetch( `${ env.API_URL }/list/${ guildId }` )
