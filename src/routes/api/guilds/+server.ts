@@ -1,6 +1,5 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { s } from '@sapphire/shapeshift'
 import { env, getSession } from '$lib'
 import { REST } from '@discordjs/rest'
 import { Routes, type APIGuild } from 'discord-api-types/v10'
