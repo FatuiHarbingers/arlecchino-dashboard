@@ -1,4 +1,4 @@
-import { type EnvType, load } from 'ts-dotenv'
+import { load } from 'ts-dotenv'
 
 const schema = {
 	API_URL: String,
@@ -17,4 +17,4 @@ const schema = {
 	REDIS_USERNAME: String
 }
 
-export const env = import.meta.env.MODE === 'staging' ? process.env as unknown as EnvType<typeof schema> : load( schema )
+export const env = load( schema )

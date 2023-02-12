@@ -1,6 +1,7 @@
 # Base Stage
 FROM node:18-alpine3.15 AS base
 
+ARG DOPPLER_TOKEN
 WORKDIR /home/node/app
 
 ENV NODE_ENV="development"
@@ -41,7 +42,7 @@ COPY --chown=node:node tsconfig.json tsconfig.json
 RUN yarn install --immutable
 
 COPY --chown=node:node src/ src/
-RUN yarn run build --mode staging
+RUN doppler run yarn run build
 
 # Runner Stage
 FROM base AS runner
