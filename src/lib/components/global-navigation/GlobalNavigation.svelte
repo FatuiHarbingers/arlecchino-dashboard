@@ -55,4 +55,16 @@ a:hover {
 .gn-item__avatar img {
 	border-radius: 100%;
 }
+
+@media ( max-width: 430px ) {
+	.global-navigation {
+		flex-wrap: wrap;
+		justify-content: center;
+		text-align: center;
+	}
+	.gn__brand {
+		flex-grow: 1;
+		width: 100%;
+	}
+}
 </style>
