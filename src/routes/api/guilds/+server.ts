@@ -59,7 +59,7 @@ export const GET: RequestHandler = async event => {
 			}
 		}
 	
-		return json( { guilds: managedGuilds } )
+		return json( { guilds: managedGuilds.sort( ( a, b ) => a.name.localeCompare( b.name ) ) } )
 	} catch ( e ) {
 		throw error( 400 )
 	}
