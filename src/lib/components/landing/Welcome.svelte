@@ -11,8 +11,6 @@
 	</div>
 	<div class="w__right">
 		<img width="196" src="https://cdn.discordapp.com/avatars/1071136383407759541/0b119bc0b816633a95d9e94b663fcff3.png?size=256" alt="Arlecchino" />
-		<div> Currently in <b>2 servers</b>. </div>
-		<div> Watching <b>3 wikis</b>. </div>
 	</div>
 </div>
 
