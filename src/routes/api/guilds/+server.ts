@@ -14,9 +14,9 @@ const hasPermissions = ( guild: APIGuild ): boolean => {
 	return permissions.has( 'ManageGuild' )
 }
 
-const getUserGuilds = async ( userId: string | undefined ): Promise<APIGuild[]> => {
-	if ( !userId ) throw error( 401 )
-	const session = await getSession( userId )
+const getUserGuilds = async ( sessionEncrypt: string | undefined ): Promise<APIGuild[]> => {
+	if ( !sessionEncrypt ) throw error( 401 )
+	const session = await getSession( sessionEncrypt )
 	
 	const rest = new REST( {
 		authPrefix: 'Bearer',
@@ -29,8 +29,8 @@ const getUserGuilds = async ( userId: string | undefined ): Promise<APIGuild[]> 
 
 export const GET: RequestHandler = async event => {
 	try {
-		const userId = event.cookies.get( 'user_id' )
-		const guilds = await getUserGuilds( userId )
+		const sessionEncrypt = event.cookies.get( 'session' )
+		const guilds = await getUserGuilds( sessionEncrypt )
 		
 		const managedGuilds: ( APIGuild & { hasBot: boolean; limit: number } )[] = []
 		for ( const guild of guilds ) {

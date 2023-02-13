@@ -1,7 +1,7 @@
 import { env } from '$lib'
 import { error, type ServerLoadEvent } from '@sveltejs/kit'
 import type { PageParentData } from '../$types'
-import { ChannelType, type APIChannel } from 'discord.js'
+import { ChannelType } from 'discord.js'
 import { Routes, type ChannelsGETResponse, type ConfigurationsGETResponse, type GuildGETResponse } from '@arlecchino/api'
 
 export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/:id'> ) => {

@@ -5,11 +5,11 @@ import { REST } from '@discordjs/rest'
 import { Routes, type APIUser } from 'discord-api-types/v10'
 
 export const load: LayoutServerLoad = async ( event: ServerLoadEvent ) => {
-	const userId = event.cookies.get( 'user_id' )
-	if ( !userId ) return
+	const sessionEncrypt = event.cookies.get( 'session' )
+	if ( !sessionEncrypt ) return
 
 	try {
-		const session = await getSession( userId )
+		const session = await getSession( sessionEncrypt )
 		const rest = new REST( {
 			authPrefix: 'Bearer',
 			version: '10'

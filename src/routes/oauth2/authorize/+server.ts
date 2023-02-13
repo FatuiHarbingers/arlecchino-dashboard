@@ -1,6 +1,7 @@
 import { setSession } from '$lib'
 import { error, redirect } from '@sveltejs/kit'
 import type { RequestEvent } from './$types'
+import { Time } from '@sapphire/timestamp'
 
 export async function GET( req: RequestEvent ) {
 	const code = req.url.searchParams.get( 'code' )
@@ -13,6 +14,11 @@ export async function GET( req: RequestEvent ) {
 		} )
 	}
 
-	await setSession( { code, state } )
+	const session = await setSession( { code, state } )
+	req.cookies.set( 'session', session, {
+		expires: new Date( Date.now() + Time.Day * 6 ),
+		path: '/'
+	} )
+
 	throw redirect( 302, '/' )
 }

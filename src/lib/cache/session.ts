@@ -2,6 +2,7 @@ import { env } from '../environment'
 import { redis } from '../redis'
 import { Time } from '@sapphire/timestamp'
 import { InvalidSession } from '../errors'
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
 
 interface SessionData {
 	access_token: string
@@ -18,20 +19,20 @@ export const enum KeyPrefix {
 
 export const getSessionKey = ( userId: string ) => `${ KeyPrefix.SESSIONS }/${ userId }`
 
-export const getSession = async ( userId: string ): Promise<SessionData> => {
-	const key = getSessionKey( userId )
-	const exists = await redis.exists( key )
-	if ( !exists ) throw new InvalidSession( userId )
+export const getSession = async ( encrypted: string | undefined ): Promise<SessionData> => {
+	if ( !encrypted ) throw new InvalidSession()
 
-	const { created_at, expires_in, ...session } = await redis.hgetall( key ) as Record<keyof SessionData, string>
-	return {
-		...session,
-		created_at: parseInt( created_at, 10 ),
-		expires_in: parseInt( expires_in, 10 )
+	const [ data, iv ] = encrypted.split( '.' )
+
+	try {
+		const decipher = createDecipheriv( 'aes-256-cbc', env.DISCORD_CLIENT_SECRET, Buffer.from( iv, 'base64' ) )
+		return JSON.parse( decipher.update( data, 'base64', 'utf-8' ) + decipher.final( 'utf-8' ) )
+	} catch {
+		throw new InvalidSession()
 	}
 }
 
-export const setSession = async ( options: { code: string, state: string } ): Promise<void> => {
+export const setSession = async ( options: { code: string, state: string } ): Promise<string> => {
 	const { code, state } = options
 	
 	const params = new URLSearchParams( {
@@ -54,4 +55,13 @@ export const setSession = async ( options: { code: string, state: string } ): Pr
 	const key = getSessionKey( state )
 	await redis.hset( key, res )
 	await redis.expire( key, Time.Day * 6 )
+
+	const iv = randomBytes( 16 )
+	const cipheriv = createCipheriv( 'aes-256-cbc', env.DISCORD_CLIENT_SECRET, iv )
+
+	const data = cipheriv.update( JSON.stringify( res ), 'utf-8', 'base64' )
+	const final = cipheriv.final( 'base64' )
+	const ivString = iv.toString( 'base64' )
+
+	return `${ data }${ final }.${ ivString }`
 }

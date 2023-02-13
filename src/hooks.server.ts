@@ -10,8 +10,8 @@ export const handle: Handle = async input => {
 	const { event, resolve } = input
 
 	if ( event.request.method === 'POST' && event.url.pathname.startsWith( '/api' ) ) {
-		const userId = event.cookies.get( 'user_id' )
-		if ( !userId ) throw error( 401 )
+		const sessionEncrypt = event.cookies.get( 'session' )
+		if ( !sessionEncrypt ) throw error( 401 )
 
 		try {
 			const body = await event.request.clone().json()
@@ -20,7 +20,7 @@ export const handle: Handle = async input => {
 			} ).ignore
 			const data = validator.parse( body )
 
-			const session = await getSession( userId )
+			const session = await getSession( sessionEncrypt )
 			const rest = new REST( {
 				authPrefix: 'Bearer',
 				version: '10'
