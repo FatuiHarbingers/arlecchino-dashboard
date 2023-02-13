@@ -18,5 +18,6 @@
 <style>
 .container {
     margin: 0 16px;
+    min-height: calc( 100vh - 100px );
 }
 </style>
