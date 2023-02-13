@@ -1,31 +1,27 @@
 import { env } from '$lib'
-import type { ServerLoadEvent } from '@sveltejs/kit'
+import { error, type ServerLoadEvent } from '@sveltejs/kit'
 import type { PageParentData } from '../$types'
 import { ChannelType, type APIChannel } from 'discord.js'
+import { Routes, type ChannelsGETResponse, type ConfigurationsGETResponse, type GuildGETResponse } from '@arlecchino/api'
 
 export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/:id'> ) => {
 	const guildId = event.params.id
 	
-	const list = await event.fetch( `${ env.API_URL }/list/${ guildId }` )
-	const wikis = await list.json() as {
-		avatar?: string
-		channel: string
-		color: number
-		guild: string
-		name?: string
-		wiki: string
-	}[]
+	const list = await event.fetch( new URL( Routes.CONFIGURATIONS.replace( ':guildId', guildId ), env.API_URL ) )
+	const wikis = await list.json() as ConfigurationsGETResponse
 
-	const reqChannels = await event.fetch( `${ env.API_URL }/channels/${ guildId }` )
-	const channels = ( await reqChannels.json() ).channels as APIChannel[]
+	const reqChannels = await event.fetch( new URL( Routes.CHANNELS.replace( ':guildId', guildId ), env.API_URL ) )
+	const resChannels = await reqChannels.json() as ChannelsGETResponse
 
-	const reqLimit = await event.fetch( `${ env.API_URL }/guild/${ guildId }` )
-	const { limit } = ( await reqLimit.json() as { limit: number } )
+	const reqLimit = await event.fetch( new URL( Routes.GUILD.replace( ':guildId', guildId ), env.API_URL ) )
+	const resLimit = await reqLimit.json() as GuildGETResponse
+
+	if ( 'error' in wikis || 'error' in resChannels || 'error' in resLimit ) throw error( 400 )
 
 	return {
-		channels: channels.filter( c => c.type === ChannelType.GuildText ),
+		channels: resChannels.channels.filter( c => c.type === ChannelType.GuildText ),
 		guildId,
-		limit,
+		limit: resLimit.limit,
 		wikis
 	}
 }

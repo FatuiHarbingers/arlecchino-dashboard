@@ -10,7 +10,6 @@
 		customSettings.push( {
 			channel: data.channels.at( 0 )?.id ?? '',
 			color: 0x0088ff,
-			guild: data.guildId,
 			remove: false,
 			wiki: ''
 		} )
@@ -29,7 +28,7 @@
 
 			if ( !newSettings ) continue
 			if ( !stored && !newSettings.remove ) {
-				const req = await fetch( '/api/register', {
+				const req = await fetch( '/api/configurations', {
 					body: JSON.stringify( newSettings, ( _, v ) => v || undefined ),
 					headers: {
 						'content-type': 'application/json'
@@ -45,15 +44,15 @@
 			} else if ( !stored ) {
 				continue
 			} else if ( newSettings.remove ) {
-				const req = await fetch( '/api/remove', {
+				const req = await fetch( '/api/configurations', {
 					body: JSON.stringify( {
-						guild: stored.guild,
+						guild: data.guildId,
 						wiki: stored.wiki
 					} ),
 					headers: {
 						'content-type': 'application/json'
 					},
-					method: 'POST'
+					method: 'DELETE'
 				} )
 				if ( req.status === 200 ) {
 					addToast( { text: `${ newSettings.wiki } has been removed successfully.`, type: 'success' } )
@@ -72,7 +71,7 @@
 				const storedValue = stored[ prop ]
 				const newValue = newSettings[ prop ]
 				if ( storedValue !== newValue ) {
-					const req = await fetch( '/api/register', {
+					const req = await fetch( '/api/configurations', {
 						body: JSON.stringify( { ...newSettings, update: true }, ( _, v ) => v ?? undefined ),
 						headers: {
 							'content-type': 'application/json'

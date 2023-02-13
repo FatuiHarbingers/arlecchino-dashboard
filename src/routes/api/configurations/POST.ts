@@ -1,7 +1,7 @@
-import { error, json } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
+import { error, json, type RequestHandler } from '@sveltejs/kit'
 import { s } from '@sapphire/shapeshift'
 import { env } from '$lib'
+import { Routes } from '@arlecchino/api'
 
 export const POST: RequestHandler = async event => {
 	try {
@@ -15,9 +15,10 @@ export const POST: RequestHandler = async event => {
 			update: s.boolean.default( false ),
 			wiki: s.string
 		} ).ignore
-		const body = parser.parse( data )
+		const { guild, ...body } = parser.parse( data )
 
-		const req = await event.fetch( `${ env.API_URL }/register`, {
+		const url = new URL( Routes.CONFIGURATIONS.replace( ':guildId', guild ), env.API_URL )
+		const req = await event.fetch( url, {
 			body: JSON.stringify( body ),
 			headers: {
 				'content-type': 'application/json'

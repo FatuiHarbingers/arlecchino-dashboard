@@ -9,8 +9,7 @@
 	export let config: {
 		avatar?: string
 		channel: string
-		color: number
-		guild: string
+		color?: number
 		name?: string
 		remove: boolean
 		wiki: string
@@ -73,7 +72,7 @@
 	}
 </script>
 
-<div class="config-view" style="--color: #{ config.color.toString( 16 ).padStart( 6, '0' ) }">
+<div class="config-view" style="--color: #{ config.color?.toString( 16 ).padStart( 6, '0' ) || '000' }">
 	{ #if config.avatar && s.string.url().run( config.avatar ).success }
 		<img class="cv__avatar" src={ config.avatar } alt="avatar" width="128" />
 	{ /if }
@@ -84,7 +83,7 @@
 	<TextInput value={ config.name } onInput={ bindString.bind( undefined, 'name' ) } />
 
 	<label for="color"> Color </label>
-	<TextInput value={ config.color.toString( 16 ).padStart( 6, '0' ) } onInput={ bindColor } />
+	<TextInput value={ config.color?.toString( 16 ).padStart( 6, '0' ) || '000' } onInput={ bindColor } />
 
 	<label for="wiki"> Wiki </label>
 	<TextInput value={ config.wiki } onChange={ bindWiki } />
