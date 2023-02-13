@@ -4,6 +4,8 @@
     import { browser } from '$app/environment';
     import type { Awaitable } from 'discord.js';
 
+	export let data: import( './$types' ).PageData
+
 	const guilds: Awaitable<{ guilds: ( APIGuild & { hasBot: boolean } )[] }> = browser
 		? fetch( '/api/guilds' )
 			.then( r => r.json() )
@@ -19,7 +21,7 @@
 		<p> Loading your guilds... </p>
 	{ :then result } 
 		{ #each result.guilds as guild }
-			<GuildView clientId="1071136383407759541" guild={ guild } />
+			<GuildView clientId={ data.clientId } guild={ guild } />
 		{ /each }
 	{ /await }
 </div>
