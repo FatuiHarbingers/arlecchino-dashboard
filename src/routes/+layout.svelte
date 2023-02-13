@@ -1,5 +1,6 @@
 <script lang="ts">
-    import GlobalNavigation from '$lib/components/global-navigation/GlobalNavigation.svelte'
+    import Footer from '$lib/components/globals/Footer.svelte';
+    import GlobalNavigation from '$lib/components/globals/GlobalNavigation.svelte'
     import Toasts from '$lib/components/ui/Toasts.svelte';
 
     export let data: import('./$types').PageData
@@ -8,4 +9,14 @@
 <GlobalNavigation user={ data.user } />
 <Toasts />
 
-<slot />
+<main class="container">
+    <slot />
+</main>
+
+<Footer version={ data.version } />
+
+<style>
+.container {
+    margin: 0 16px;
+}
+</style>
