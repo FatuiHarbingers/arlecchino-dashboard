@@ -6,7 +6,7 @@ import { Routes, type APIUser } from 'discord-api-types/v10'
 
 export const load: LayoutServerLoad = async ( event: ServerLoadEvent ) => {
 	const sessionEncrypt = event.cookies.get( 'session' )
-	if ( !sessionEncrypt ) return
+	if ( !sessionEncrypt ) return { version: APP_VERSION }
 
 	try {
 		const session = await getSession( sessionEncrypt )
@@ -17,10 +17,11 @@ export const load: LayoutServerLoad = async ( event: ServerLoadEvent ) => {
 		const { avatar, discriminator, id, locale, username } = await rest.get( Routes.user() ) as APIUser
 
 		return {
-			user: { avatar, discriminator, id, locale, username }
+			user: { avatar, discriminator, id, locale, username },
+			version: APP_VERSION
 		}
 	} catch ( e ) {
 		console.error( e )
-		return
+		return { version: APP_VERSION }
 	}
 }
