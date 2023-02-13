@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit'
 import type { RequestEvent } from './$types'
-import { randomUUID } from 'crypto'
+import { randomBytes } from 'crypto'
 import { env } from '$lib'
 import { Time } from '@sapphire/timestamp'
 
 export function GET( req: RequestEvent ) {
-	const userId = randomUUID()
+	const userId = randomBytes( 16 ).toString( 'hex' )
 
 	req.cookies.set( 'user_id', userId, {
 		expires: new Date( Date.now() + Time.Day * 6 ),
