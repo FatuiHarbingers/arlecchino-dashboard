@@ -63,7 +63,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }} GITHUB_PAT=${{ secrets.GH_TOKEN }}
+          build-args: |
+            "DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}"
+            "GITHUB_PAT=${{ secrets.GH_TOKEN }}"
 
       - name: Save image tag for use in deploy job
         id: save_tag
