@@ -4,23 +4,24 @@
     import TextInput from '../forms/TextInput.svelte';
     import Button from '../ui/Button.svelte';
 	import { s } from '@sapphire/shapeshift'
+    import { setWiki, update as updateConfig, type Configuration } from '$lib/stores/Configurations';
 
 	export let channels: APIChannel[]
-	export let config: {
-		avatar?: string
-		channel: string
-		color?: number
-		name?: string
-		remove: boolean
-		wiki: string
-	}
+	export let config: Configuration
+	export let idx: number
 
 	const bindString = ( property: 'avatar' | 'name', e: unknown ) => {
 		const event = e as EventTarget & { target: EventTarget & HTMLInputElement }
 		if ( event.target.value.length === 0 ) {
-			config[ property ] = undefined
+			updateConfig( {
+				wiki: config.wiki,
+				[ property ]: undefined
+			} )
 		} else {
-			config[ property ] = event.target.value
+			updateConfig( {
+				wiki: config.wiki,
+				[ property ]: event.target.value
+			} )
 		}
 	}
 
@@ -28,28 +29,38 @@
 		const event = e as EventTarget & { target: EventTarget & HTMLInputElement }
 		const color = parseInt( event.target.value, 16 )
 		if ( event.target.value.length !== 6 || isNaN( color ) || color < 0 || color > 0xffffff ) return
-		config.color = color
+		updateConfig( {
+			color,
+			wiki: config.wiki
+		} )
 	}
 
 	const bindChannel = ( e: unknown ) => {
 		const event = e as EventTarget & { target: EventTarget & HTMLSelectElement }
 		const channel = event.target.value
-		config.channel = channel
+		updateConfig( {
+			channel,
+			wiki: config.wiki
+		} )
 	}
 
 	const toggleRemove = () => {
-		config.remove = !config.remove
+		updateConfig( {
+			remove: !config.remove,
+			wiki: config.wiki
+		} )
 	}
 
 	const bindWiki = ( e: unknown ) => {
+		if ( config._original ) return
 		const event = e as EventTarget & { target: EventTarget & HTMLInputElement }
 		const value = event.target.value.trim()
 
 		if ( value.length === 0 ) {
-			config.wiki = ''
+			setWiki( idx, '' )
 			return
 		} else if ( value.match( /^([a-z-]{2,5}\.)?[a-z0-9-]+$/ ) ) {
-			config.wiki = value
+			setWiki( idx, value )
 			return
 		}
 
@@ -58,9 +69,9 @@
 		if ( !name || !url.hostname.match( /^[a-z0-9-]+\.fandom\.com$/ ) ) return
 		const lang = url.pathname.split( '/' ).at( 1 )
 		if ( !lang || lang === 'wiki' ) {
-			config.wiki = name
+			setWiki( idx, name )
 		} else {
-			config.wiki = `${ lang }.${ name }`
+			setWiki( idx, `${ lang }.${ name }` )
 		}
 	}
 
@@ -86,7 +97,7 @@
 	<TextInput value={ config.color?.toString( 16 ).padStart( 6, '0' ) || '000' } onInput={ bindColor } />
 
 	<label for="wiki"> Wiki </label>
-	<TextInput value={ config.wiki } onChange={ bindWiki } />
+	<TextInput value={ config.wiki } disabled={ Boolean( config._original ) } onChange={ config._original ? undefined : bindWiki } />
 
 	<label for="channel"> Channel </label>
 	<Dropdown value={ config.channel } onChange={ bindChannel }>

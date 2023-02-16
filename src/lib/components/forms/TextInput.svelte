@@ -1,11 +1,12 @@
 <script lang="ts">
 	export let onChange: ( ( e: unknown ) => void ) | null = null
 	export let onInput: ( ( e: unknown ) => void ) | null = null
+	export let disabled = false
 	export let placeholder: string | null = null
 	export let value: string | null = null
 </script>
 
-<input type="text" on:change={ onChange } on:input={ onInput } placeholder={ placeholder } value={ value ?? '' } />
+<input type="text" disabled={ disabled } on:change={ onChange } on:input={ onInput } placeholder={ placeholder } value={ value ?? '' } />
 
 <style>
 input {
@@ -20,5 +21,9 @@ input {
 }
 input:focus-within {
 	border-color: #08f;
+}
+input[disabled] {
+	background-color: #040608;
+	cursor: not-allowed;
 }
 </style>

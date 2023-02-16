@@ -14,16 +14,16 @@ export const DELETE: RequestHandler = async event => {
 		const { guild, wiki } = parser.parse( data )
 
 		const url = new URL( Routes.CONFIGURATIONS.replace( ':guildId', guild ), env.API_URL )
-		const req = await event.fetch( url, {
+		await event.fetch( url, {
 			body: JSON.stringify( { wiki } as ConfigurationsDELETERequest ),
 			headers: {
 				'content-type': 'application/json'
 			},
 			method: 'DELETE'
 		} )
-		const res = await req.json()
-		return json( res )
+		return json( data )
 	} catch ( e ) {
+		console.log( e )
 		throw error( 400 )
 	}
 }

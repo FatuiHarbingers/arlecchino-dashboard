@@ -2,18 +2,18 @@
 	import { add as addToast } from '$lib/stores/Toasts';
     import ConfigView from '$lib/components/dashboard/ConfigView.svelte'
     import Button from '$lib/components/ui/Button.svelte';
+    import { add as addConfig, configurations, set as setConfigs } from '$lib/stores/Configurations';
 
     export let data: import('./$types').PageData
-	let customSettings = data.wikis.map( i => ( { ...i, remove: false } ) )
+	setConfigs( data.wikis )
 
 	const add = () => {
-		customSettings.push( {
+		addConfig( {
 			channel: data.channels.at( 0 )?.id ?? '',
 			color: 0x0088ff,
 			remove: false,
 			wiki: ''
 		} )
-		customSettings = customSettings
 	}
 
 	let isSaving = false
@@ -21,15 +21,18 @@
 		if ( isSaving ) return
 		isSaving = true
 
-		const maxItems = Math.max( data.wikis.length, customSettings.length )
+		const maxItems = Math.max( data.wikis.length, $configurations.length )
 		for ( let i = 0; i < maxItems; i++ ) {
 			const stored = data.wikis.at( i )
-			const newSettings = customSettings.at( i )
+			const newSettings = $configurations.at( i )
 
 			if ( !newSettings ) continue
 			if ( !stored && !newSettings.remove ) {
 				const req = await fetch( '/api/configurations', {
-					body: JSON.stringify( newSettings, ( _, v ) => v || undefined ),
+					body: JSON.stringify( {
+						...newSettings,
+						guild: data.guildId
+					}, ( _, v ) => v || undefined ),
 					headers: {
 						'content-type': 'application/json'
 					},
@@ -72,7 +75,11 @@
 				const newValue = newSettings[ prop ]
 				if ( storedValue !== newValue ) {
 					const req = await fetch( '/api/configurations', {
-						body: JSON.stringify( { ...newSettings, update: true }, ( _, v ) => v ?? undefined ),
+						body: JSON.stringify( {
+							...newSettings,
+							guild: data.guildId,
+							update: true
+						}, ( _, v ) => v ?? undefined ),
 						headers: {
 							'content-type': 'application/json'
 						},
@@ -88,8 +95,7 @@
 			}
 		}
 		
-		customSettings = customSettings.filter( i => !i.remove )
-		data.wikis = customSettings.map( i => ( { ...i } ) )
+		setConfigs( $configurations.filter( i => !i.remove ) )
 		isSaving = false
 	}
 </script>
@@ -99,8 +105,8 @@
 </svelte:head>
 
 <main class="container">
-	{ #each customSettings as config }
-		<ConfigView channels={ data.channels } config={ config } />
+	{ #each $configurations as config, idx }
+		<ConfigView channels={ data.channels } config={ config } idx={ idx } />
 	{ /each }
 
 	<Button text="Register new wiki" css={ {
@@ -108,7 +114,7 @@
 		'margin-top': '16px',
 		'text-align': 'center',
 		width: '100%'
-	} } onClick={ add } type="success" disabled={ customSettings.length >= data.limit } />
+	} } onClick={ add } type="success" disabled={ $configurations.length >= data.limit } />
 
 	<Button text="Save changes" css={ {
 			display: 'block',
