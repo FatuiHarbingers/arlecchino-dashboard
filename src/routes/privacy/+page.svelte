@@ -30,7 +30,7 @@
 <h2> Where is the information processed </h2>
 
 <p>
-	The Services are hosted from the United States. No matter where you are located you consent to processing and transferring of your information in and to Germany, Spain, and other countries. The laws of United States, and other countries governing data collection and use may not be as comprehensive or protective as the laws of the country where you live.
+	The Services are hosted from the United States. No matter where you are located you consent to processing and transferring of your information in and to the United States and other countries. The laws of United States, and other countries governing data collection and use may not be as comprehensive or protective as the laws of the country where you live.
 </p>
 
 <h2> Our use of your information </h2>
