@@ -2,20 +2,20 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { s } from '@sapphire/shapeshift'
 import { env } from '$lib'
-import { Routes, type ConfigurationsDELETERequest } from '@arlecchino/api'
+import { getRoute, Routes, type ConfigurationsDELETERequest } from '@arlecchino/api'
 
 export const DELETE: RequestHandler = async event => {
 	try {
 		const data = await event.request.json()
-		const parser = s.object( {
+		const parser = s.object<ConfigurationsDELETERequest & { guild: string }>( {
 			guild: s.string,
 			wiki: s.string
 		} ).ignore
-		const { guild, wiki } = parser.parse( data )
+		const { guild: guildId, wiki } = parser.parse( data )
 
-		const url = new URL( Routes.CONFIGURATIONS.replace( ':guildId', guild ), env.API_URL )
+		const url = new URL( getRoute( Routes.CONFIGURATIONS, { guildId } ), env.API_URL )
 		await event.fetch( url, {
-			body: JSON.stringify( { wiki } as ConfigurationsDELETERequest ),
+			body: JSON.stringify( { wiki } ),
 			headers: {
 				'content-type': 'application/json'
 			},
