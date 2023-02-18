@@ -5,15 +5,15 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@arlecchino/api@ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#c33f5c57f8edd08ae7903c27f8a7f93906182f0b":
+"@arlecchino/api@ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#65f5b6ca16f08aaa90f06aff0503ec4b44e6db30":
   version: 1.0.0
-  resolution: "@arlecchino/api@ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#commit=c33f5c57f8edd08ae7903c27f8a7f93906182f0b"
+  resolution: "@arlecchino/api@ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#commit=65f5b6ca16f08aaa90f06aff0503ec4b44e6db30"
   dependencies:
     "@sapphire/discord-utilities": ^3.0.0
     "@sapphire/shapeshift": ^3.8.1
     tsup: ^6.6.2
     typescript: ^4.9.5
-  checksum: 17c010f0e9c3490be3cfdfccfa27c5f519eb76b079ff7e27db3a17752d23ffcac0e268ef8c8da11e5b44bf40b28da75b163bfb760374ad8c1d391b9a2c7fd03b
+  checksum: ed95c6a8b5f5f855001f9ac40162feac9ad6e89f307f55719e894eded9770a2caf69e392a98314ac6de8e927793eaaa29c12bbd62650b53bb9a5ba83132306bf
   languageName: node
   linkType: hard
 
@@ -1025,7 +1025,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "arlecchino-dashboard@workspace:."
   dependencies:
-    "@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#c33f5c57f8edd08ae7903c27f8a7f93906182f0b"
+    "@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#65f5b6ca16f08aaa90f06aff0503ec4b44e6db30"
     "@discordjs/rest": ^1.5.0
     "@sapphire/discord-utilities": ^3.0.0
     "@sapphire/shapeshift": ^3.8.1
