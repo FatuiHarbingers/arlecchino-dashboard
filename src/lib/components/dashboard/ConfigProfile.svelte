@@ -224,4 +224,22 @@
 	height: 12px;
 	width: 12px;
 }
+
+@media ( max-width: 1180px ) {
+	.profile {
+		column-gap: 16px;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.profile__control {
+		flex-basis: 100%;
+	}
+	.profile__settings {
+		flex-direction: column;
+	}
+	.profile__demo {
+		align-self: flex-start;
+		flex-grow: 1;
+	}
+}
 </style>
