@@ -1,9 +1,10 @@
 <script lang="ts">
 	export let onChange: ( ( e: unknown ) => void ) | null = null
 	export let value: string | null = null
+	export let width: `${ number }px` | `${ number }%` = '250px'
 </script>
 
-<select value={ value } on:change={ onChange }>
+<select value={ value } on:change={ onChange } style:width>
 	<slot />
 </select>
 

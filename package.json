@@ -27,7 +27,7 @@
 	"type": "module",
 	"packageManager": "yarn@3.4.1",
 	"dependencies": {
-		"@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#65f5b6ca16f08aaa90f06aff0503ec4b44e6db30",
+		"@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#0ba3c970dbc00322e30f0eb72275c42a4838569d",
 		"@discordjs/rest": "^1.5.0",
 		"@sapphire/discord-utilities": "^3.0.0",
 		"@sapphire/shapeshift": "^3.8.1",

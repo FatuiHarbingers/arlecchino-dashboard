@@ -2,7 +2,7 @@ import { env } from '$lib'
 import { error, type ServerLoadEvent } from '@sveltejs/kit'
 import type { PageParentData } from '../$types'
 import { ChannelType } from 'discord.js'
-import { Routes, type ChannelsGETResponse, type ConfigurationsGETResponse, type GuildGETResponse } from '@arlecchino/api'
+import { getRoute, Routes, type ChannelsGETResponse, type ConfigurationsGETResponse, type GuildsGETResponse } from '@arlecchino/api'
 
 export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/:id'> ) => {
 	const guildId = event.params.id
@@ -13,8 +13,8 @@ export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentDat
 	const reqChannels = await event.fetch( new URL( Routes.CHANNELS.replace( ':guildId', guildId ), env.API_URL ) )
 	const resChannels = await reqChannels.json() as ChannelsGETResponse
 
-	const reqLimit = await event.fetch( new URL( Routes.GUILD.replace( ':guildId', guildId ), env.API_URL ) )
-	const resLimit = await reqLimit.json() as GuildGETResponse
+	const reqLimit = await event.fetch( new URL( getRoute( Routes.GUILDS, { guildId } ), env.API_URL ) )
+	const resLimit = await reqLimit.json() as GuildsGETResponse
 
 	if ( 'error' in wikis || 'error' in resChannels || 'error' in resLimit ) throw error( 400 )
 
