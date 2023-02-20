@@ -43,7 +43,7 @@ export const updateProperty = ( options: { interwiki: string, type: ProfileType 
 		if ( ( property !== 'color' && typeof value === 'string' )
 			|| ( property === 'color' && typeof value === 'number' )
 			|| ( property === 'remove' && typeof value === 'boolean' ) ) {
-			// @ts-expect-error
+			// @ts-expect-error -- value should be safe
 			profile[ property ] = value
 		} else {
 			throw new Error( `Invalid value "${ value }" for property "${ property }".` )

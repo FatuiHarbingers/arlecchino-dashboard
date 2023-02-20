@@ -1,5 +1,5 @@
 import { add as addToast } from '$lib/stores/Toasts'
-import type { Configuration, ConfigurationStore } from '$lib/stores/Configurations'
+import type { ConfigurationStore } from '$lib/stores/Configurations'
 
 export const saveUpdatedWikis = async ( configurations: ConfigurationStore, guildId: string ) => {
 	const promises: Promise<{
