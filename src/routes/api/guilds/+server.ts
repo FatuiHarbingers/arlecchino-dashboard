@@ -4,8 +4,8 @@ import { env, getSession } from '$lib'
 import { REST } from '@discordjs/rest'
 import { Routes, type APIGuild } from 'discord-api-types/v10'
 import { PermissionsBitField } from 'discord.js'
-import { Routes as APIRoutes } from '@arlecchino/api'
-import type { GuildGETResponse } from '@arlecchino/api'
+import { getRoute, Routes as APIRoutes } from '@arlecchino/api'
+import type { GuildsGETResponse } from '@arlecchino/api'
 
 const hasPermissions = ( guild: APIGuild ): boolean => {
 	if ( !guild.permissions ) return false
@@ -27,37 +27,44 @@ const getUserGuilds = async ( sessionEncrypt: string | undefined ): Promise<APIG
 	return guilds
 }
 
+type ManagedGuild = ( APIGuild & { hasBot: boolean; limit: number } )
+
+const fetchData = async ( guild: APIGuild ): Promise<ManagedGuild> => {
+	try {
+		const url = new URL( getRoute( APIRoutes.GUILDS, { guildId: guild.id } ), env.API_URL )
+		const req = await fetch( url )
+		const res = await req.json() as GuildsGETResponse
+
+		if ( 'error' in res ) {
+			throw new Error( res.error )
+		}
+
+		return {
+			...guild,
+			hasBot: res.exists,
+			limit: res.limit
+		}
+	} catch {
+		return {
+			...guild,
+			hasBot: false,
+			limit: 0
+		}
+	}
+}
+
 export const GET: RequestHandler = async event => {
 	try {
 		const sessionEncrypt = event.cookies.get( 'session' )
 		const guilds = await getUserGuilds( sessionEncrypt )
 		
-		const managedGuilds: ( APIGuild & { hasBot: boolean; limit: number } )[] = []
+		const promises: Promise<ManagedGuild>[] = []
 		for ( const guild of guilds ) {
 			if ( !hasPermissions( guild ) ) continue
-	
-			try {
-				const url = new URL( APIRoutes.GUILD.replace( ':guildId', guild.id ), env.API_URL )
-				const req = await event.fetch( url )
-				const res = await req.json() as GuildGETResponse
-
-				if ( 'error' in res ) {
-					throw new Error( res.error )
-				}
-
-				managedGuilds.push( {
-					...guild,
-					hasBot: res.exists,
-					limit: res.limit
-				} )
-			} catch {
-				managedGuilds.push( {
-					...guild,
-					hasBot: false,
-					limit: 0
-				} )
-			}
+			promises.push( fetchData( guild ) )
 		}
+
+		const managedGuilds = await Promise.all( promises )
 	
 		return json( { guilds: managedGuilds.sort( ( a, b ) => a.name.localeCompare( b.name ) ) } )
 	} catch ( e ) {

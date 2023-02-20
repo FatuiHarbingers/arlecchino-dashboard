@@ -31,7 +31,8 @@ export const handle: Handle = async input => {
 			
 			const permissions = new PermissionsBitField( BigInt( guild.permissions ) )
 			if ( !permissions.has( 'ManageGuild' ) ) throw error( 403 )
-		} catch {
+		} catch ( e ) {
+			console.log( e )
 			throw error( 400 )
 		}
 	}
