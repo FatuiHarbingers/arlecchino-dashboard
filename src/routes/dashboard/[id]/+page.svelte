@@ -1,12 +1,13 @@
 <script lang="ts">
     import { browser } from '$app/environment';
     import Config from '$lib/components/dashboard/Config.svelte';
+    import Dropdown from '$lib/components/forms/Dropdown.svelte';
     import TextInput from '$lib/components/forms/TextInput.svelte';
     import Button from '$lib/components/ui/Button.svelte';
 	import { configurations, getConfiguration, type Configuration, type ConfigurationStore } from '$lib/stores/Configurations';
     import { profiles, type ProfileStore } from '$lib/stores/Profiles';
     import { add as addToast } from '$lib/stores/Toasts';
-    import type { ProfilesGETResponse } from '@arlecchino/api';
+    import { SnowflakeValidator, type ProfilesGETResponse } from '@arlecchino/api';
 	import { InterwikiValidator } from '@arlecchino/api';
     import { saveNewProfiles } from './save-new-profiles';
     import { saveNewWikis } from './save-new-wikis';
@@ -142,6 +143,58 @@
 		} )
 		isSaving = false
 	}
+
+	let isFollowing = false
+	const saveFollow = async ( e: unknown ) => {
+		if ( isFollowing ) {
+			addToast( {
+				text: `Your request is already being processed.`,
+				type: 'warn'
+			} )
+			return
+		}
+		isFollowing = true
+
+		const event = e as EventTarget & { currentTarget: EventTarget & HTMLElement }
+		const dropdown = event.currentTarget.previousElementSibling
+		if ( !( dropdown instanceof HTMLSelectElement ) ) return
+		
+		const value = dropdown.value.trim()
+		const snowflake = SnowflakeValidator.run( value )
+
+		if ( dropdown.value.length === 0 || snowflake.isErr() ) {
+			addToast( {
+				text: `The channel seems to be wrong.`,
+				type: 'danger'
+			} )
+			return
+		}
+		
+		const req = await fetch( `/api/announcements`, {
+			body: JSON.stringify( {
+				channel: snowflake.unwrap(),
+				guild: data.guildId
+			} ),
+			headers: {
+				'content-type': 'application/json'
+			},
+			method: 'POST'
+		} )
+
+		if ( req.status >= 400 ) {
+			addToast( {
+				text: `There was an error with your request.`,
+				type: 'danger'
+			} )
+		} else {
+			addToast( {
+				text: `You are now following my announcements channel!`,
+				type: 'success'
+			} )
+		}
+
+		isFollowing = false
+	}
 </script>
 
 <svelte:head>
@@ -149,7 +202,20 @@
 </svelte:head>
 
 <main class="container">
-	<div class="container__add-wiki">
+	<div class="container__box">
+		Don't miss any news! Follow my announcements channel.
+
+		<div class="form-control">
+			<Dropdown>
+				{ #each data.channels as channel }
+					<option value="{ channel.id }"> #{ channel.name } </option>
+				{ /each }
+			</Dropdown>
+			<Button text="Follow" onClick={ saveFollow } />
+		</div>
+	</div>
+
+	<div class="container__box">
 		You are currently following <b>{ Object.keys( $configurations ).length }</b> wikis, and your limit is <b>{ data.limit }.</b>
 
 		<div class="form-control">
@@ -177,7 +243,7 @@
 	padding-bottom: 20px;
 	width: 80%;
 }
-.container__add-wiki {
+.container__box {
 	background-color: #0a0e12;
 	border-radius: 5px;
 	margin: 16px 0;

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getProfile, profiles, profileTypeString, updateProperty, type Profile } from "$lib/stores/Profiles";
+    import { getProfile, profiles, profileTypeString, updateProperty } from "$lib/stores/Profiles";
     import type { ProfileType } from "@arlecchino/api";
     import TextInput from "../forms/TextInput.svelte";
     import Button from "../ui/Button.svelte";

@@ -2,10 +2,8 @@
     import { configurations, getConfiguration } from "$lib/stores/Configurations";
     import { getProfile, profiles, profileTypes, profileTypeString, type Profile } from "$lib/stores/Profiles";
     import type { ProfileType } from "@arlecchino/api";
-    import { s } from "@sapphire/shapeshift";
     import type { APIChannel } from "discord.js";
     import Dropdown from "../forms/Dropdown.svelte";
-    import TextInput from "../forms/TextInput.svelte";
     import Button from "../ui/Button.svelte";
     import ConfigProfile from "./ConfigProfile.svelte";
 
