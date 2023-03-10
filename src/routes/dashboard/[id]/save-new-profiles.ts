@@ -1,52 +1,35 @@
 import { add as addToast } from '$lib/stores/Toasts'
-import { profileTypeString, type ProfileStore } from '$lib/stores/Profiles'
-import { s } from '@sapphire/shapeshift'
-import type { ProfileType } from '@arlecchino/api'
+import type { Profile_type } from '@prisma/client'
+import type { ProfileStore } from '$lib/stores/Profiles'
+import { trpc } from '$lib/trpc/client'
+
 
 export const saveNewProfiles = async ( store: ProfileStore, guildId: string ) => {
 	const promises: Promise<{
 		error: unknown | null
-		type: ProfileType
+		type: Profile_type
 		wiki: string
 	}>[] = []
-
-	const validator = s.object( {
-		avatar: s.string.url().optional,
-		color: s.number.greaterThanOrEqual( 0 ).lessThanOrEqual( 0xffffff ).optional,
-		name: s.string.lengthGreaterThan( 0 ).optional
-	} ).ignore
 
 	for ( const profiles of Object.values( store ) ) {
 		for ( const profile of profiles ) {
 			if ( profile._original || profile.remove ) continue
 			
-			const result = validator.run( profile )
-			console.log( result )
-			if ( result.isErr() ) {
+			if ( Object.keys( profile ).length === 0 ) {
 				addToast( {
-					text: `Some of the values aren't valid in your settings for profile ${ profileTypeString[ profile.type ] } in ${ profile.wiki }.`,
-					type: 'danger'
-				} )
-				continue
-			} else if ( Object.keys( result.unwrap() ).length === 0 ) {
-				addToast( {
-					text: `You must set at least one of the properties to be able to save profile ${ profileTypeString[ profile.type ] } for ${ profile.wiki }.`,
+					text: `You must set at least one of the properties to be able to save profile ${ profile.type } for ${ profile.wiki }.`,
 					type: 'warn'
 				} )
 				continue
 			}
 
-			const req = fetch( `/api/profiles`, {
-				body: JSON.stringify( {
-					...result.unwrap(),
-					guild: guildId,
-					type: profile.type,
-					wiki: profile.wiki
-				} ),
-				headers: {
-					'content-type': 'application/json'
-				},
-				method: 'POST'
+			const req = trpc().profiles.create.query( {
+				avatar: profile.avatar ?? undefined,
+				color: profile.color ?? undefined,
+				guild: guildId,
+				name: profile.name ?? undefined,
+				type: profile.type,
+				wiki: profile.wiki
 			} )
 				.then( () => ( { error: null, type: profile.type, wiki: profile.wiki } ) )
 				.catch( e => ( { error: e, type: profile.type, wiki: profile.wiki } ) )
@@ -63,12 +46,12 @@ export const saveNewProfiles = async ( store: ProfileStore, guildId: string ) =>
 			} )
 		} else if ( item.value.error ) {
 			addToast( {
-				text: `There was an error while trying to register profile ${ profileTypeString[ item.value.type ] } for ${ item.value.wiki }.`,
+				text: `There was an error while trying to register profile ${ item.value.type } for ${ item.value.wiki }.`,
 				type: 'danger'
 			} )
 		} else {
 			addToast( {
-				text: `Profile ${ profileTypeString[ item.value.type ] } in ${ item.value.wiki } was registered successfully.`,
+				text: `Profile ${ item.value.type } in ${ item.value.wiki } was registered successfully.`,
 				type: 'success'
 			} )
 		}

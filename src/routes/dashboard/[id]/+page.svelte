@@ -1,5 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
+    import { page } from '$app/stores';
     import Config from '$lib/components/dashboard/Config.svelte';
     import Dropdown from '$lib/components/forms/Dropdown.svelte';
     import TextInput from '$lib/components/forms/TextInput.svelte';
@@ -7,8 +8,8 @@
 	import { configurations, getConfiguration, type Configuration, type ConfigurationStore } from '$lib/stores/Configurations';
     import { profiles, type ProfileStore } from '$lib/stores/Profiles';
     import { add as addToast } from '$lib/stores/Toasts';
-    import { SnowflakeValidator, type ProfilesGETResponse } from '@arlecchino/api';
-	import { InterwikiValidator } from '@arlecchino/api';
+    import { trpc } from '$lib/trpc/client';
+    import { SnowflakeValidator } from '@arlecchino/api';
     import { saveNewProfiles } from './save-new-profiles';
     import { saveNewWikis } from './save-new-wikis';
     import { saveRemovedProfiles } from './save-removed-profiles';
@@ -17,6 +18,7 @@
     import { saveUpdatedWikis } from './save-updated-wikis';
 
     export let data: import('./$types').PageData
+	const t = trpc($page)
 
 	configurations.update( store => {
 		store = data.wikis.map( ( { wiki, ...body } ) => {
@@ -35,7 +37,7 @@
 
 	let profilesLoaded = false
 
-	const loadProfiles = ( profilesData: Exclude<ProfilesGETResponse, { error: string }> ) => {
+	const loadProfiles = ( profilesData: Awaited<ReturnType<typeof t[ 'profiles' ][ 'list' ][ 'query' ]>> ) => {
 		profiles.update( store => {
 			for ( const profile of profilesData ) {
 				const wiki = store[ profile.wiki ] ?? []
@@ -52,8 +54,7 @@
 	}
 
 	if ( browser ) {
-		fetch( `/api/profiles?guild=${ data.guildId }` )
-			.then( r => r.json() )
+		t.profiles.list.query( { guild: data.guildId } )
 			.then( loadProfiles )
 	}
 
@@ -66,17 +67,33 @@
 		if ( !( input instanceof HTMLInputElement ) ) return
 		
 		const value = input.value.trim()
-		const interwiki = InterwikiValidator.run( value )
+		try {
+			const url = new URL( value )
+			let wiki: string
+			if ( url.pathname.includes( '/wiki/' ) ) {
+				const from = url.pathname.search( '/wiki/' )
+				url.pathname = url.pathname.substring( 0, from + 1 )
+				wiki = new URL( './api.php', url ).href
+			} else if ( url.pathname.includes( '/w/' ) ) {
+				const from = url.pathname.search( '/w/' )
+				url.pathname = url.pathname.substring( 0, from + 3 )
+				wiki = new URL( './api.php', url ).href
+			} else if ( url.pathname.match( /^\/[a-z-]{2,5}$/ ) ) {
+				url.pathname += '/'
+				wiki = new URL( './api.php', url ).href
+			} else {
+				wiki = new URL( '/api.php', url ).href
+			}
 
-		if ( input.value.length === 0 || interwiki.isErr() ) {
-			error.innerText = 'You must enter a valid interwiki.'
-			return
-		} else if ( $configurations[ interwiki.unwrap() ] ) {
-			error.innerText = 'This wiki is already in your follow list.'
-			return
+			if ( $configurations[ wiki ] ) {
+				error.innerText = 'This wiki is already in your follow list.'
+				return
+			}
+
+			getConfiguration( $configurations, wiki )
+		} catch {
+			error.innerText = 'You must enter a valid wiki URL.'
 		}
-
-		getConfiguration( $configurations, interwiki.unwrap() )
 	}
 
 	let isSaving = false
@@ -170,26 +187,20 @@
 			return
 		}
 		
-		const req = await fetch( `/api/announcements`, {
-			body: JSON.stringify( {
+		try {
+			await trpc( $page ).announcements.query( {
 				channel: snowflake.unwrap(),
 				guild: data.guildId
-			} ),
-			headers: {
-				'content-type': 'application/json'
-			},
-			method: 'POST'
-		} )
-
-		if ( req.status >= 400 ) {
-			addToast( {
-				text: `There was an error with your request.`,
-				type: 'danger'
 			} )
-		} else {
+			
 			addToast( {
 				text: `You are now following my announcements channel!`,
 				type: 'success'
+			} )
+		} catch {
+			addToast( {
+				text: `There was an error with your request.`,
+				type: 'danger'
 			} )
 		}
 
@@ -232,8 +243,8 @@
 		</div>
 	</div>
 
-	{ #each Object.keys( $configurations ) as interwiki }
-		<Config channels={ data.channels } interwiki={ interwiki } ready={ profilesLoaded } />
+	{ #each Object.keys( $configurations ) as api }
+		<Config channels={ data.channels } api={ api } ready={ profilesLoaded } />
 	{ /each }
 </main>
 

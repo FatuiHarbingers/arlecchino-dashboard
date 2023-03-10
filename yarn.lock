@@ -503,6 +503,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/client@npm:4.11.0":
+  version: 4.11.0
+  resolution: "@prisma/client@npm:4.11.0"
+  dependencies:
+    "@prisma/engines-version": 4.11.0-57.8fde8fef4033376662cad983758335009d522acb
+  peerDependencies:
+    prisma: "*"
+  peerDependenciesMeta:
+    prisma:
+      optional: true
+  checksum: ca8d8f820caaf4a76b94674f88207d5bb14f57a9682d37d2f79c56378f259cd3b14b30a110ab59a97647fcf3c46f896e7a2d20ded2777e09b835d7accd70cf1d
+  languageName: node
+  linkType: hard
+
+"@prisma/engines-version@npm:4.11.0-57.8fde8fef4033376662cad983758335009d522acb":
+  version: 4.11.0-57.8fde8fef4033376662cad983758335009d522acb
+  resolution: "@prisma/engines-version@npm:4.11.0-57.8fde8fef4033376662cad983758335009d522acb"
+  checksum: f040b93d09b21feaef193080eed22142fa26b3cf86d089ebb4286f5f45ed17a98e030a8bb55c0bec2892e15880a697f6754c6966b7795cf7ba4553f59fb387e7
+  languageName: node
+  linkType: hard
+
+"@prisma/engines@npm:4.11.0":
+  version: 4.11.0
+  resolution: "@prisma/engines@npm:4.11.0"
+  checksum: 98030cead39e5009b7a91fd2463433ccdb16cbeb6c7345ed7950c25dbe0731a425fc888458a1423b594d659972e081ca3d63d301ef647f05a634209c75769db2
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-commonjs@npm:^24.0.0":
   version: 24.0.1
   resolution: "@rollup/plugin-commonjs@npm:24.0.1"
@@ -706,6 +734,22 @@ __metadata:
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
   checksum: ad87447820dd3f24825d2d947ebc03072b20a42bfc96cbafec16bff8bbda6c1a81fcb0be56d5b21968560c5359a0af4038a68ba150c3e1694fe4c109a063bed8
+  languageName: node
+  linkType: hard
+
+"@trpc/client@npm:^10.12.0, @trpc/client@npm:^10.14.1":
+  version: 10.14.1
+  resolution: "@trpc/client@npm:10.14.1"
+  peerDependencies:
+    "@trpc/server": 10.14.1
+  checksum: f82f141797ce3dbc5731277db3499cc02d7348df614b72cc52a7d48d365e2723b157be9168a5d6c4901729a78b5be7eecf924877f3972604f2b17677faa898b0
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:^10.12.0, @trpc/server@npm:^10.14.1":
+  version: 10.14.1
+  resolution: "@trpc/server@npm:10.14.1"
+  checksum: 31c29e2b46e2108573cb6fa5582890ac94ede439d7414b6de80f15008a801bbb676506431a1d773cc0350b174dcd8ad9ba01f7480b897240a32b499b9c07a752
   languageName: node
   linkType: hard
 
@@ -1027,12 +1071,15 @@ __metadata:
   dependencies:
     "@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#0ba3c970dbc00322e30f0eb72275c42a4838569d"
     "@discordjs/rest": ^1.5.0
+    "@prisma/client": 4.11.0
     "@sapphire/discord-utilities": ^3.0.0
     "@sapphire/shapeshift": ^3.8.1
     "@sapphire/timestamp": ^1.0.0
     "@sveltejs/adapter-auto": ^2.0.0
     "@sveltejs/adapter-node": ^1.1.8
     "@sveltejs/kit": ^1.5.0
+    "@trpc/client": ^10.14.1
+    "@trpc/server": ^10.14.1
     "@typescript-eslint/eslint-plugin": ^5.45.0
     "@typescript-eslint/parser": ^5.45.0
     discord-api-types: ^0.37.31
@@ -1041,8 +1088,10 @@ __metadata:
     eslint-plugin-svelte3: ^4.0.0
     ioredis: ^5.3.0
     mw.js: ^3.1.0
+    prisma: ^4.11.0
     svelte: ^3.54.0
     svelte-check: ^3.0.1
+    trpc-sveltekit: ^3.4.2
     ts-dotenv: ^0.9.1
     tslib: ^2.4.1
     typescript: ^4.9.3
@@ -3653,6 +3702,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prisma@npm:^4.11.0":
+  version: 4.11.0
+  resolution: "prisma@npm:4.11.0"
+  dependencies:
+    "@prisma/engines": 4.11.0
+  bin:
+    prisma: build/index.js
+    prisma2: build/index.js
+  checksum: 760d80766ae16ad2d25cfc20d75433b020dff0937eab864b94b95beadd89e481508e4d3c6370a5df90749d5ac5c7af77c9c2f293b74bfdee0e548b04a905c2e7
+  languageName: node
+  linkType: hard
+
 "process@npm:^0.11.10":
   version: 0.11.10
   resolution: "process@npm:0.11.10"
@@ -4478,6 +4539,20 @@ __metadata:
   bin:
     tree-kill: cli.js
   checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
+  languageName: node
+  linkType: hard
+
+"trpc-sveltekit@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "trpc-sveltekit@npm:3.4.2"
+  dependencies:
+    "@trpc/client": ^10.12.0
+    "@trpc/server": ^10.12.0
+  peerDependencies:
+    "@sveltejs/adapter-node": ^1.2.0
+    "@types/ws": ^8.5.4
+    ws: ^8.12.0
+  checksum: f0b8539ba2bfaaff8adb3543022d445b6e961465a6fff6ad94d538c58de2781541ee4d73ff89fa1efa4b2588f078182a2f71676264147978e77b7e1895184d1b
   languageName: node
   linkType: hard
 

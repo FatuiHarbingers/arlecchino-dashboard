@@ -1,15 +1,11 @@
 <script lang="ts">
-	import type { APIGuild } from 'discord-api-types/v10'
     import GuildView from '$lib/components/dashboard/GuildView.svelte'
-    import { browser } from '$app/environment';
-    import type { Awaitable } from 'discord.js';
+    import { trpc } from '$lib/trpc/client';
+    import { page } from '$app/stores';
 
 	export let data: import( './$types' ).PageData
 
-	const guilds: Awaitable<{ guilds: ( APIGuild & { hasBot: boolean } )[] }> = browser
-		? fetch( '/api/guilds' )
-			.then( r => r.json() )
-		: { guilds: [] }
+	const guilds = trpc($page).guilds.list.query()
 </script>
 
 <svelte:head>
@@ -20,7 +16,7 @@
 	{ #await guilds }
 		<p> Loading your guilds... </p>
 	{ :then result } 
-		{ #each result.guilds as guild }
+		{ #each result as guild }
 			<GuildView clientId={ data.clientId } guild={ guild } />
 		{ /each }
 	{ /await }

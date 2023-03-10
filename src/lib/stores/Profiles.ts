@@ -1,8 +1,11 @@
-import { ProfileType, type ProfilesPOSTRequest } from '@arlecchino/api'
+import type { trpc } from '$lib/trpc/client'
+import { Profile_type } from '@prisma/client'
 import { writable } from 'svelte/store'
 
-export type Profile = ProfilesPOSTRequest & {
-	_original?: ProfilesPOSTRequest
+export type ProfileBase = Omit<Awaited<ReturnType<ReturnType<typeof trpc>[ 'profiles' ][ 'list' ][ 'query' ]>>[ number ], 'Configurations' | 'guild'>
+
+export type Profile = ProfileBase & {
+	_original?: ProfileBase
 	remove?: boolean
 }
 
@@ -13,8 +16,8 @@ export interface ProfileStore {
 export const profiles = writable<ProfileStore>( {} )
 
 export function getProfile( store: ProfileStore, interwiki: string, type?: undefined ): Profile[]
-export function getProfile( store: ProfileStore, interwiki: string, type: ProfileType ): Profile
-export function getProfile( store: ProfileStore, interwiki: string, type?: ProfileType | undefined ): Profile | Profile[] {
+export function getProfile( store: ProfileStore, interwiki: string, type: Profile_type ): Profile
+export function getProfile( store: ProfileStore, interwiki: string, type?: Profile_type | undefined ): Profile | Profile[] {
 	const wiki = store[ interwiki ] ?? []
 	store[ interwiki ] ??= wiki
 
@@ -23,7 +26,10 @@ export function getProfile( store: ProfileStore, interwiki: string, type?: Profi
 	const profile = wiki.find( p => p.type === type )
 	if ( profile ) return profile
 
-	const newProfile = {
+	const newProfile: Profile = {
+		avatar: null,
+		color: null,
+		name: null,
 		type,
 		wiki: interwiki
 	}
@@ -36,14 +42,14 @@ export function getProfile( store: ProfileStore, interwiki: string, type?: Profi
 	return newProfile
 }
 
-export const updateProperty = ( options: { interwiki: string, type: ProfileType }, property: 'avatar' | 'color' | 'name' | 'remove', value: string | number | boolean ) => {
+export const updateProperty = ( options: { interwiki: string, type: Profile_type }, property: 'avatar' | 'color' | 'name' | 'remove', value: string | number | boolean ) => {
 	profiles.update( store => {
 		const profile = getProfile( store, options.interwiki, options.type )
 		
 		if ( ( property !== 'color' && typeof value === 'string' )
 			|| ( property === 'color' && typeof value === 'number' )
 			|| ( property === 'remove' && typeof value === 'boolean' ) ) {
-			// @ts-expect-error -- value should be safe
+			// @ts-expect-error - asserted enough
 			profile[ property ] = value
 		} else {
 			throw new Error( `Invalid value "${ value }" for property "${ property }".` )
@@ -53,11 +59,4 @@ export const updateProperty = ( options: { interwiki: string, type: ProfileType 
 	} )
 }
 
-export const profileTypeString: Record<ProfileType, string> = {
-	[ ProfileType.DEFAULT ]: 'Default',
-	[ ProfileType.DISCUSSIONS ]: 'Discussions',
-	[ ProfileType.LOGEVENTS ]: 'Log events',
-	[ ProfileType.RECENTCHANGES ]: 'Recent changes'
-}
-
-export const profileTypes = [ ProfileType.DEFAULT, ProfileType.DISCUSSIONS, ProfileType.LOGEVENTS, ProfileType.RECENTCHANGES ]
+export const profileTypes = [ Profile_type.Default, Profile_type.Discussions, Profile_type.LogEvents, Profile_type.RecentChanges ]

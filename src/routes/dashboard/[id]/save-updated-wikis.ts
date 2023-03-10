@@ -1,5 +1,6 @@
 import { add as addToast } from '$lib/stores/Toasts'
 import type { ConfigurationStore } from '$lib/stores/Configurations'
+import { trpc } from '$lib/trpc/client'
 
 export const saveUpdatedWikis = async ( configurations: ConfigurationStore, guildId: string ) => {
 	const promises: Promise<{
@@ -12,17 +13,11 @@ export const saveUpdatedWikis = async ( configurations: ConfigurationStore, guil
 
 		if ( config.channel === config._original.channel ) continue
 
-		const req = fetch( `/api/configurations`, {
-			body: JSON.stringify( {
-				channel: config.channel,
-				guild: guildId,
-				update: true,
-				wiki: interwiki
-			} ),
-			headers: {
-				'content-type': 'application/json'
-			},
-			method: 'POST'
+		const req = trpc().configurations.create.query( {
+			channel: config.channel,
+			guild: guildId,
+			update: true,
+			wiki: interwiki
 		} )
 			.then( () => ( { error: null, wiki: interwiki } ) )
 			.catch( e => ( { error: e, wiki: interwiki } ) )

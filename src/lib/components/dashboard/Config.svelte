@@ -1,26 +1,24 @@
 <script lang="ts">
     import { configurations, getConfiguration } from "$lib/stores/Configurations";
-    import { getProfile, profiles, profileTypes, profileTypeString, type Profile } from "$lib/stores/Profiles";
-    import type { ProfileType } from "@arlecchino/api";
+    import { getProfile, profiles, profileTypes, type Profile } from "$lib/stores/Profiles";
+    import type { Profile_type } from '@prisma/client';
     import type { APIChannel } from "discord.js";
     import Dropdown from "../forms/Dropdown.svelte";
     import Button from "../ui/Button.svelte";
     import ConfigProfile from "./ConfigProfile.svelte";
 
 	export let channels: APIChannel[]
-	export let interwiki: string
+	export let api: string
 	export let ready: boolean
 
-	$: config = getConfiguration( $configurations, interwiki )
+	$: config = getConfiguration( $configurations, api )
 
-	const baseUrl = interwiki.includes( '.' )
-		? `https://${ interwiki.split( '.' ).at( 1 ) }.fandom.com/${ interwiki.split( '.' ).at( 0 ) }`
-		: `https://${ interwiki }.fandom.com`
+	const baseUrl = api.replace( /(\/w(iki)?)?\/api.php/, '' )
 
 	let profileList: Profile[] = []
-	let missingProfiles: ProfileType[] = []
+	let missingProfiles: Profile_type[] = []
 	$: {
-		profileList = getProfile( $profiles, interwiki )
+		profileList = getProfile( $profiles, api )
 		missingProfiles = profileTypes.filter( p => !profileList.find( i => i.type === p ) )
 	}
 
@@ -29,16 +27,16 @@
 		const dropdown = event.currentTarget.previousElementSibling
 		if ( !( dropdown instanceof HTMLSelectElement ) ) return
 
-		const type = parseInt( dropdown.value, 10 )
+		const type = dropdown.value as Profile_type
 		if ( !profileTypes.includes( type ) ) return
 
-		getProfile( $profiles, interwiki, type )
+		getProfile( $profiles, api, type )
 	}
 
 	const clickRemove = () => {
 		config.remove = !config.remove
 		configurations.update( list => {
-			list[ interwiki ] = config
+			list[ api ] = config
 			return list
 		} )
 	}
@@ -47,7 +45,7 @@
 		const event = e as EventTarget & { currentTarget: EventTarget & HTMLSelectElement }
 		config.channel = event.currentTarget.value
 		configurations.update( list => {
-			list[ interwiki ] = config
+			list[ api ] = config
 			return list
 		} )
 	}
@@ -57,7 +55,6 @@
 		<div class="config__link">
 			<a class="config__url" href={ baseUrl }>
 				{ baseUrl }
-				<span class="config__interwiki"> { interwiki } </span>
 			</a>
 		</div>
 
@@ -66,7 +63,7 @@
 		</div>
 
 		<div class="config__dropdown">
-			<Dropdown value={ $configurations[ interwiki ].channel } width="100%" onChange={ changeChannel }>
+			<Dropdown value={ $configurations[ api ].channel } width="100%" onChange={ changeChannel }>
 				{ #each channels as channel }
 					<option value={ channel.id }> #{ channel.name } </option>
 				{ /each }
@@ -80,7 +77,7 @@
 				<label for="profileType"> Add a new profile </label>
 				<Dropdown value={ missingProfiles.at( 0 )?.toString() }>
 					{ #each missingProfiles as profileType }
-						<option value={ profileType.toString() }> { profileTypeString[ profileType ] } </option>
+						<option value={ profileType.toString() }> { profileType } </option>
 					{ /each }
 				</Dropdown>
 				<Button text="Add" onClick={ addProfile } />
@@ -128,12 +125,6 @@
 }
 .config__url:hover {
 	color: #fff;
-}
-.config__interwiki::before {
-	content: "(";
-}
-.config__interwiki::after {
-	content: ")";
 }
 .config__dropdown {
 	flex-basis: 100%;

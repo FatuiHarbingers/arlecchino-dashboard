@@ -1,5 +1,6 @@
 import { add as addToast } from '$lib/stores/Toasts'
 import type { ConfigurationStore } from '$lib/stores/Configurations'
+import { trpc } from '$lib/trpc/client'
 
 export const saveRemovedWikis = async ( configurations: ConfigurationStore, guildId: string ) => {
 	const promises: Promise<{
@@ -9,15 +10,9 @@ export const saveRemovedWikis = async ( configurations: ConfigurationStore, guil
 	for ( const [ interwiki, config ] of Object.entries( configurations ) ) {
 		if ( !config.remove || !config._original ) continue
 
-		const req = fetch( `/api/configurations`, {
-			body: JSON.stringify( {
-				guild: guildId,
-				wiki: interwiki
-			} ),
-			headers: {
-				'content-type': 'application/json'
-			},
-			method: 'DELETE'
+		const req = trpc().configurations.remove.query( {
+			guild: guildId,
+			wiki: interwiki
 		} )
 			.then( () => ( { error: null, wiki: interwiki } ) )
 			.catch( e => ( { error: e, wiki: interwiki } ) )

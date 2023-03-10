@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Configurations {
+  channel        String    @db.VarChar(255)
+  guild          String    @db.VarChar(255)
+  wiki           String    @db.VarChar(255)
+  guildSnowflake String?   @db.VarChar(255)
+  Guilds         Guilds?   @relation(fields: [guildSnowflake], references: [snowflake])
+  Profile        Profile[]
+
+  @@id([guild, wiki])
+  @@index([guildSnowflake], map: "Configurations_guildSnowflake_fkey")
+}
+
+model Guilds {
+  limit          Int?             @default(1)
+  snowflake      String           @id @db.VarChar(255)
+  Configurations Configurations[]
+}
+
+model Profile {
+  avatar             String?        @db.VarChar(255)
+  color              Int?           @default(44225)
+  name               String?        @db.VarChar(255)
+  type               Profile_type
+  configurationGuild String         @db.VarChar(255)
+  configurationWiki  String         @db.VarChar(255)
+  Configurations     Configurations @relation(fields: [configurationGuild, configurationWiki], references: [guild, wiki])
+
+  @@unique([configurationGuild, configurationWiki, type])
+}
+
+enum Profile_type {
+  Default
+  Discussions
+  LogEvents
+  RecentChanges
+}

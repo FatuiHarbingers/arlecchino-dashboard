@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { getProfile, profiles, profileTypeString, updateProperty } from "$lib/stores/Profiles";
-    import type { ProfileType } from "@arlecchino/api";
+    import { getProfile, profiles, updateProperty } from "$lib/stores/Profiles";
+    import type { Profile_type } from '@prisma/client';
     import TextInput from "../forms/TextInput.svelte";
     import Button from "../ui/Button.svelte";
 
 	export let interwiki: string
-	export let type: ProfileType
+	export let type: Profile_type
 
 	const defaultAvatar = 'https://cdn.discordapp.com/avatars/1071136383407759541/0b119bc0b816633a95d9e94b663fcff3.png?size=128'
 	const defaultColor = 0x0095ae
@@ -16,8 +16,6 @@
 	$: avatar = profile?.avatar ?? defaultAvatar
 	$: color = profile?.color ?? defaultColor
 	$: name = profile?.name ?? defaultName
-
-	const profileType = profileTypeString[ type ]
 
 	const update = updateProperty.bind( undefined, { interwiki, type } )
 
@@ -50,7 +48,7 @@
 		<div class="profile__label" on:click={ collapseProfile }>
 			<span class="profile__arrow"> { collapse ? '▶' : '▼' } </span>
 			<b>Profile type:</b>
-			{ profileType }
+			{ type }
 		</div>
 		<Button text="&times;" type="danger" style="smooth" onClick={ toggleRemoval } />
 	</div>

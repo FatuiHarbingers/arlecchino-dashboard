@@ -1,27 +1,28 @@
-import { env } from '$lib'
-import { error, type ServerLoadEvent } from '@sveltejs/kit'
+import { prisma } from '$lib'
+import type { ServerLoadEvent } from '@sveltejs/kit'
 import type { PageParentData } from '../$types'
-import { ChannelType } from 'discord.js'
-import { getRoute, Routes, type ChannelsGETResponse, type ConfigurationsGETResponse, type GuildsGETResponse } from '@arlecchino/api'
+import type { PageServerLoad } from './$types'
+import { createContext, router } from '$lib/trpc'
 
-export const load = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/:id'> ) => {
-	const guildId = event.params.id
-	
-	const list = await event.fetch( new URL( Routes.CONFIGURATIONS.replace( ':guildId', guildId ), env.API_URL ) )
-	const wikis = await list.json() as ConfigurationsGETResponse
+export const load: PageServerLoad = async ( event: ServerLoadEvent<{ id: string }, PageParentData, '/dashboard/[id]'> ) => {
+	const guild = event.params.id
 
-	const reqChannels = await event.fetch( new URL( Routes.CHANNELS.replace( ':guildId', guildId ), env.API_URL ) )
-	const resChannels = await reqChannels.json() as ChannelsGETResponse
+	const t = router.createCaller( await createContext( event ) )
+	const configurations = await t.configurations.list( { guild } )
 
-	const reqLimit = await event.fetch( new URL( getRoute( Routes.GUILDS, { guildId } ), env.API_URL ) )
-	const resLimit = await reqLimit.json() as GuildsGETResponse
+	const wikis = configurations.map( i => ( { channel: i.channel, wiki: i.wiki } ) )
+	const channels = await t.channels.list( { guild } )
 
-	if ( 'error' in wikis || 'error' in resChannels || 'error' in resLimit ) throw error( 400 )
+	const limit = ( await prisma.guilds.findUnique( {
+		where: {
+			snowflake: guild
+		}
+	} ) )?.limit ?? 1
 
 	return {
-		channels: resChannels.channels.filter( c => c.type === ChannelType.GuildText ),
-		guildId,
-		limit: resLimit.limit,
+		channels,
+		guildId: guild,
+		limit,
 		wikis
 	}
 }

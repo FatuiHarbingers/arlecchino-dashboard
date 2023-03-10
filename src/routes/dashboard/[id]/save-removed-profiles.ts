@@ -1,11 +1,12 @@
 import { add as addToast } from '$lib/stores/Toasts'
-import { profileTypeString, type ProfileStore } from '$lib/stores/Profiles'
-import type { ProfileType } from '@arlecchino/api'
+import type { Profile_type } from '@prisma/client'
+import type { ProfileStore } from '$lib/stores/Profiles'
+import { trpc } from '$lib/trpc/client'
 
 export const saveRemovedProfiles = async ( store: ProfileStore, guildId: string ) => {
 	const promises: Promise<{
 		error: unknown | null
-		type: ProfileType
+		type: Profile_type
 		wiki: string
 	}>[] = []
 
@@ -13,16 +14,10 @@ export const saveRemovedProfiles = async ( store: ProfileStore, guildId: string 
 		for ( const profile of profiles ) {
 			if ( !profile.remove || !profile._original ) continue
 
-			const req = fetch( `/api/profiles`, {
-				body: JSON.stringify( {
-					guild: guildId,
-					type: profile.type,
-					wiki: profile.wiki
-				} ),
-				headers: {
-					'content-type': 'application/json'
-				},
-				method: 'DELETE'
+			const req = trpc().profiles.remove.query( {
+				guild: guildId,
+				type: profile.type,
+				wiki: profile.wiki
 			} )
 				.then( () => ( { error: null, type: profile.type, wiki: profile.wiki } ) )
 				.catch( e => ( { error: e, type: profile.type, wiki: profile.wiki } ) )
@@ -37,12 +32,12 @@ export const saveRemovedProfiles = async ( store: ProfileStore, guildId: string 
 		if ( result.status === 'fulfilled' ) {
 			if ( result.value.error ) {
 				addToast( {
-					text: `There was an error while trying to remove profile ${ profileTypeString[ result.value.type ] } in ${ result.value.wiki }.`,
+					text: `There was an error while trying to remove profile ${ result.value.type } in ${ result.value.wiki }.`,
 					type: 'danger'
 				} )
 			} else {
 				addToast( {
-					text: `Profile ${ profileTypeString[ result.value.type ] } in ${ result.value.wiki } was removed successfully.`,
+					text: `Profile ${ result.value.type } in ${ result.value.wiki } was removed successfully.`,
 					type: 'success'
 				} )
 			}

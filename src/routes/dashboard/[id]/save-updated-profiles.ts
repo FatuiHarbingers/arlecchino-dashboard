@@ -1,11 +1,12 @@
 import { add as addToast } from '$lib/stores/Toasts'
-import { profileTypeString, type ProfileStore } from '$lib/stores/Profiles'
-import type { ProfileType } from '@arlecchino/api'
+import type { Profile_type } from '@prisma/client'
+import type { ProfileStore } from '$lib/stores/Profiles'
+import { trpc } from '$lib/trpc/client'
 
 export const saveUpdatedProfiles = async ( store: ProfileStore, guildId: string ) => {
 	const promises: Promise<{
 		error: unknown | null
-		type: ProfileType
+		type: Profile_type
 		wiki: string
 	}>[] = []
 
@@ -18,19 +19,13 @@ export const saveUpdatedProfiles = async ( store: ProfileStore, guildId: string 
 
 			const { avatar, color, name, type, wiki} = profile
 
-			const req = fetch( `/api/profiles`, {
-				body: JSON.stringify( {
-					avatar,
-					color,
-					guild: guildId,
-					name,
-					type,
-					wiki
-				} ),
-				headers: {
-					'content-type': 'application/json'
-				},
-				method: 'POST'
+			const req = trpc().profiles.create.query( {
+				avatar: avatar ?? undefined,
+				color: color ?? undefined,
+				guild: guildId,
+				name: name ?? undefined,
+				type,
+				wiki
 			} )
 				.then( res => {
 					console.log( res )
@@ -49,12 +44,12 @@ export const saveUpdatedProfiles = async ( store: ProfileStore, guildId: string 
 		if ( result.status === 'fulfilled' ) {
 			if ( result.value.error ) {
 				addToast( {
-					text: `There was an error while trying to update profile ${ profileTypeString[ result.value.type ] } for ${ result.value.wiki }.`,
+					text: `There was an error while trying to update profile ${ result.value.type } for ${ result.value.wiki }.`,
 					type: 'danger'
 				} )
 			} else {
 				addToast( {
-					text: `Profile ${ profileTypeString[ result.value.type ] } in ${ result.value.wiki } was updated successfully.`,
+					text: `Profile ${ result.value.type } in ${ result.value.wiki } was updated successfully.`,
 					type: 'success'
 				} )
 			}

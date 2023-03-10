@@ -1,6 +1,6 @@
 <script>
-    import Feature from "$lib/components/landing/Feature.svelte";
-import Welcome from "$lib/components/landing/Welcome.svelte";
+    import Feature from "$lib/components/landing/Feature.svelte"
+	import Welcome from "$lib/components/landing/Welcome.svelte"
 
 </script>
 <svelte:head>
