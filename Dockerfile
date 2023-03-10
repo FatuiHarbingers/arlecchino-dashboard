@@ -28,6 +28,7 @@ COPY --chown=node:node .yarnrc.yml .
 COPY --chown=node:node static/ static/
 COPY --chown=node:node svelte.config.js .
 COPY --chown=node:node vite.config.ts .
+COPY --chown=node:node prisma/ prisma/
 # Remove global cache config line
 RUN echo "$(tail -n +2 .yarnrc.yml)" > .yarnrc.yml
 
@@ -47,6 +48,7 @@ RUN git config --global url."https://$GH_TOKEN@github.com/".insteadOf ssh://git@
 RUN yarn install --immutable
 
 COPY --chown=node:node src/ src/
+RUN yarn prisma generate
 RUN doppler run yarn run build
 
 # Runner Stage
@@ -57,11 +59,12 @@ WORKDIR /home/node/app
 ENV NODE_ENV="production"
 
 COPY --chown=node:node --from=builder /home/node/app/dist dist
-# COPY --chown=node:node --from=builder /home/node/app/node_modules node_modules
+COPY --chown=node:node prisma/ prisma/
 
 ARG GH_TOKEN
 RUN git config --global url."https://$GH_TOKEN@github.com/".insteadOf ssh://git@github.com/
 RUN yarn workspaces focus --all --production
+COPY --chown=node:node --from=builder /home/node/app/node_modules/.prisma node_modules/.prisma
 RUN chown node:node /home/node/app
 
 USER node
