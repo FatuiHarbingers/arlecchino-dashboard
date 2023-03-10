@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { getProfile, profiles, updateProperty } from "$lib/stores/Profiles";
-    import type { Profile_type } from '@prisma/client';
+    import { getProfile, profiles, type ProfileType, updateProperty } from "$lib/stores/Profiles";
     import TextInput from "../forms/TextInput.svelte";
     import Button from "../ui/Button.svelte";
 
 	export let interwiki: string
-	export let type: Profile_type
+	export let type: ProfileType
 
 	const defaultAvatar = 'https://cdn.discordapp.com/avatars/1071136383407759541/0b119bc0b816633a95d9e94b663fcff3.png?size=128'
 	const defaultColor = 0x0095ae

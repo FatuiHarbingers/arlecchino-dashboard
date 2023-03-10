@@ -1,6 +1,7 @@
 import type { trpc } from '$lib/trpc/client'
-import { Profile_type } from '@prisma/client'
 import { writable } from 'svelte/store'
+
+export type ProfileType = 'Default' | 'Discussions' | 'LogEvents' | 'RecentChanges'
 
 export type ProfileBase = Omit<Awaited<ReturnType<ReturnType<typeof trpc>[ 'profiles' ][ 'list' ][ 'query' ]>>[ number ], 'Configurations' | 'guild'>
 
@@ -16,8 +17,8 @@ export interface ProfileStore {
 export const profiles = writable<ProfileStore>( {} )
 
 export function getProfile( store: ProfileStore, interwiki: string, type?: undefined ): Profile[]
-export function getProfile( store: ProfileStore, interwiki: string, type: Profile_type ): Profile
-export function getProfile( store: ProfileStore, interwiki: string, type?: Profile_type | undefined ): Profile | Profile[] {
+export function getProfile( store: ProfileStore, interwiki: string, type: ProfileType ): Profile
+export function getProfile( store: ProfileStore, interwiki: string, type?: ProfileType | undefined ): Profile | Profile[] {
 	const wiki = store[ interwiki ] ?? []
 	store[ interwiki ] ??= wiki
 
@@ -42,7 +43,7 @@ export function getProfile( store: ProfileStore, interwiki: string, type?: Profi
 	return newProfile
 }
 
-export const updateProperty = ( options: { interwiki: string, type: Profile_type }, property: 'avatar' | 'color' | 'name' | 'remove', value: string | number | boolean ) => {
+export const updateProperty = ( options: { interwiki: string, type: ProfileType }, property: 'avatar' | 'color' | 'name' | 'remove', value: string | number | boolean ) => {
 	profiles.update( store => {
 		const profile = getProfile( store, options.interwiki, options.type )
 		
@@ -59,4 +60,4 @@ export const updateProperty = ( options: { interwiki: string, type: Profile_type
 	} )
 }
 
-export const profileTypes = [ Profile_type.Default, Profile_type.Discussions, Profile_type.LogEvents, Profile_type.RecentChanges ]
+export const profileTypes: ProfileType[] = [ 'Default', 'Discussions', 'LogEvents', 'RecentChanges' ]

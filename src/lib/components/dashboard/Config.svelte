@@ -1,7 +1,6 @@
 <script lang="ts">
     import { configurations, getConfiguration } from "$lib/stores/Configurations";
-    import { getProfile, profiles, profileTypes, type Profile } from "$lib/stores/Profiles";
-    import type { Profile_type } from '@prisma/client';
+    import { getProfile, profiles, type ProfileType, profileTypes, type Profile } from "$lib/stores/Profiles";
     import type { APIChannel } from "discord.js";
     import Dropdown from "../forms/Dropdown.svelte";
     import Button from "../ui/Button.svelte";
@@ -16,7 +15,7 @@
 	const baseUrl = api.replace( /(\/w(iki)?)?\/api.php/, '' )
 
 	let profileList: Profile[] = []
-	let missingProfiles: Profile_type[] = []
+	let missingProfiles: ProfileType[] = []
 	$: {
 		profileList = getProfile( $profiles, api )
 		missingProfiles = profileTypes.filter( p => !profileList.find( i => i.type === p ) )
@@ -27,7 +26,7 @@
 		const dropdown = event.currentTarget.previousElementSibling
 		if ( !( dropdown instanceof HTMLSelectElement ) ) return
 
-		const type = dropdown.value as Profile_type
+		const type = dropdown.value as ProfileType
 		if ( !profileTypes.includes( type ) ) return
 
 		getProfile( $profiles, api, type )

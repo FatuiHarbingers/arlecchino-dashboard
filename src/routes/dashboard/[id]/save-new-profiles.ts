@@ -1,13 +1,12 @@
 import { add as addToast } from '$lib/stores/Toasts'
-import type { Profile_type } from '@prisma/client'
-import type { ProfileStore } from '$lib/stores/Profiles'
+import type { ProfileStore, ProfileType } from '$lib/stores/Profiles'
 import { trpc } from '$lib/trpc/client'
 
 
 export const saveNewProfiles = async ( store: ProfileStore, guildId: string ) => {
 	const promises: Promise<{
 		error: unknown | null
-		type: Profile_type
+		type: ProfileType
 		wiki: string
 	}>[] = []
 
