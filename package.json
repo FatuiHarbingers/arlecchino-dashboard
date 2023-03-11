@@ -28,7 +28,6 @@
 	"type": "module",
 	"packageManager": "yarn@3.4.1",
 	"dependencies": {
-		"@arlecchino/api": "ssh://git@github.com:FatuiHarbingers/arlecchino-api.git#0ba3c970dbc00322e30f0eb72275c42a4838569d",
 		"@discordjs/rest": "^1.5.0",
 		"@prisma/client": "4.11.0",
 		"@sapphire/discord-utilities": "^3.0.0",

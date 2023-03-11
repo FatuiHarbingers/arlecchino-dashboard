@@ -1,6 +1,6 @@
 import { prisma } from '$lib/prisma'
 import { configurationExists, getConfigurationCount, getConfigurationLimit, updateConfiguration } from '$lib/prisma/configurations'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { s } from '@sapphire/shapeshift'
 import { manage } from '../middlewares'
 import { t } from '../t'

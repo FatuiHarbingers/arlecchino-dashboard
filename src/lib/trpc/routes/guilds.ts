@@ -1,7 +1,7 @@
 import { prisma } from '$lib/prisma'
 import { redis } from '$lib/redis'
 import { rest as restBot } from '$lib/rest'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { REST } from '@discordjs/rest'
 import { s } from '@sapphire/shapeshift'
 import { Routes, type APIGuild } from 'discord-api-types/v10'

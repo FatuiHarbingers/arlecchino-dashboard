@@ -9,7 +9,7 @@
     import { profiles, type ProfileStore } from '$lib/stores/Profiles';
     import { add as addToast } from '$lib/stores/Toasts';
     import { trpc } from '$lib/trpc/client';
-    import { SnowflakeValidator } from '@arlecchino/api';
+import { SnowflakeValidator } from '$lib/utils'
     import { saveNewProfiles } from './save-new-profiles';
     import { saveNewWikis } from './save-new-wikis';
     import { saveRemovedProfiles } from './save-removed-profiles';

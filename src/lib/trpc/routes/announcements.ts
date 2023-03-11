@@ -1,5 +1,5 @@
 import { env } from '$lib/environment'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { s } from '@sapphire/shapeshift'
 import { manage } from '../middlewares'
 import { t } from '../t'

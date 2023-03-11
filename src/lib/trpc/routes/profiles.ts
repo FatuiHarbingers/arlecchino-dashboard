@@ -1,6 +1,6 @@
 import { prisma } from '$lib/prisma'
 import { configurationExists } from '$lib/prisma/configurations'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { Profile_type } from '@prisma/client'
 import { EmbedLimits } from '@sapphire/discord-utilities'
 import { s } from '@sapphire/shapeshift'

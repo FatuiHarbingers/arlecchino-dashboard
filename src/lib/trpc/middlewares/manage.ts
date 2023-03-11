@@ -3,7 +3,7 @@ import { session } from './session'
 import { REST } from '@discordjs/rest'
 import { Routes, type APIGuild } from 'discord-api-types/v10'
 import { s } from '@sapphire/shapeshift'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { PermissionsBitField } from 'discord.js'
 
 export const manage = session.unstable_pipe( async ( { ctx, input, rawInput, next } ) => {

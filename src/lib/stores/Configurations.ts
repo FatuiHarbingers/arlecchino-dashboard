@@ -1,9 +1,13 @@
-import type { ConfigurationPOSTRequest } from '@arlecchino/api'
 import { writable } from 'svelte/store'
 
-export type Configuration = Omit<ConfigurationPOSTRequest, 'wiki'> & {
-	readonly _original?: Omit<ConfigurationPOSTRequest, 'wiki'>
+export type Configuration = {
+	readonly _original?: {
+		channel: string
+		update?: boolean;
+	}
+    channel: string
 	remove?: boolean
+    update?: boolean
 }
 
 export interface ConfigurationStore {

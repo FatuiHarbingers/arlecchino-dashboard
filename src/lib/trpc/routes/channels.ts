@@ -1,5 +1,5 @@
 import { rest } from '$lib/rest'
-import { SnowflakeValidator } from '@arlecchino/api'
+import { SnowflakeValidator } from '$lib/utils'
 import { s } from '@sapphire/shapeshift'
 import { ChannelType, Routes, type APIChannel, type APIGuildTextChannel } from 'discord-api-types/v10'
 import { session } from '../middlewares'
